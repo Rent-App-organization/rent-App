@@ -20,7 +20,31 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             <div className="flex space-x-6">
-              {["home", "articles", "about", "contact"].map((item) => (
+              {["about", "contact"].map((item) => (
+                <Link
+                  key={item}
+                  to={`/${item}`}
+                  className="relative group py-2 text-gray-600"
+                >
+                  <span className="relative z-10">
+                    {item.charAt(0).toUpperCase() + item.slice(1)}
+                  </span>
+                  <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-300"></div>
+                </Link>
+              ))}
+            </div>
+
+            <div className="flex space-x-6">
+              {[
+                "Rentals",
+                "PropertyDetails",
+                "Checkout",
+                "Wishlist",
+                "UserProfile",
+                "Support",
+                "AdminDash",
+                "SellerDash",
+              ].map((item) => (
                 <Link
                   key={item}
                   to={`/${item}`}
@@ -38,11 +62,11 @@ const Navbar = () => {
           {/* Right Section */}
           <div className="flex items-center space-x-6">
             <Link
-              to="/dashboard"
+              to="/UserProfile"
               className="hidden lg:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all"
             >
               <LayoutDashboard className="h-5 w-5" />
-              Dashboard
+              User Profile
             </Link>
           </div>
         </div>
