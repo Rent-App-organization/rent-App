@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import BookingDetailsModal from "./BookingDetailsModal";
-import GuestDetailsModal from "./GuestDetailsModal";
+import BookingDetailsModal from "../modals/BookingDetailsModal";
+import GuestDetailsModal from "../modals/GuestDetailsModal";
 
 // Example data
 const bookingData = {

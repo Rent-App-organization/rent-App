@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { FaClipboardList, FaCheck, FaTimes } from "react-icons/fa";
-import BookingWizard from "./BookingWizard";
+import BookingWizard from "../modals/BookingWizard";
 
 export default function BookingsSection({ bookings, properties, onBookingAction }) {
   const [selectedBooking, setSelectedBooking] = useState(null);
