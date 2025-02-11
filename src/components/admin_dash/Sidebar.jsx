@@ -11,8 +11,8 @@ import {
 export default function Sidebar({ isSidebarOpen, toggleSidebar }) {
   const menuItems = [
     { icon: <FaTachometerAlt />, label: "Dashboard" },
-    { icon: <FaUserTie />, label: "Managers" },
-    { icon: <FaHome />, label: "Listings" },
+    { icon: <FaUserTie />, label: "Users" },
+    { icon: <FaHome />, label: "Home" },
     { icon: <FaCog />, label: "Settings" },
   ];
 

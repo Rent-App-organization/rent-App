@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import LandlordSidebar from "./LandlordSidebar";
-import LandlordHeader from "./LandlordHeader";
 import PropertiesSection from "./PropertiesSection";
 import CalendarSection from "./CalendarSection";
 import BookingsSection from "./BookingsSection";
 import AnalyticsSection from "./AnalyticsSection";
+import NavBar from "../navBar/NavBar";
 import { FaBars } from "react-icons/fa";
 
 export default function SellerDash() {
@@ -64,6 +63,7 @@ export default function SellerDash() {
 
   return (
     <div className="relative flex min-h-screen bg-gray-50">
+
       {/* Toggle button for mobile */}
       <button
         className="sm:hidden fixed bottom-4 right-4 z-50 p-3 bg-indigo-600 text-white rounded-full shadow-lg"
@@ -72,13 +72,10 @@ export default function SellerDash() {
         <FaBars />
       </button>
 
-      {/* Sidebar */}
-      <LandlordSidebar isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       {/* Main content */}
       <div className="flex-1 flex flex-col">
-        <LandlordHeader toggleSidebar={toggleSidebar} />
-
+      <NavBar />
         <main className="p-4 sm:p-6 overflow-y-auto space-y-6">
           {/* Property Management */}
           <PropertiesSection
