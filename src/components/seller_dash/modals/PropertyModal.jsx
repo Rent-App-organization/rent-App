@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   FaTimes,
   FaImage,
@@ -8,24 +9,31 @@ import {
   FaEdit,
 } from "react-icons/fa";
 
-// Import the Firebase realtime database functions and your configured database.
-import { ref, push, set, update } from "firebase/database";
-
-import { database } from "../../../fireBaseConfig"; // Adjust the import path as needed
+import { createProperty, updateProperty } from "../service/PropertyService.js";
 
 const defaultBookingIcon = "https://random.imagecdn.app/500/150";
 
 export default function PropertyModal({ property, onClose, onSave }) {
+  // Get the current user from Redux.
+  const user = useSelector((state) => state.auth.user);
+
   const [formData, setFormData] = useState({
     title: "",
     location: "",
+    neighborhood: "",
+    bedrooms: "",
+    area: "",
+    category: "",
+    date: "",
     price: "",
-    images: [],
+    photos: [],
     description: "",
+    seller: user ? user.uid : "",
   });
 
   const modalRef = useRef(null);
 
+  // Animate the modal entrance.
   useEffect(() => {
     if (modalRef.current) {
       modalRef.current.classList.remove("opacity-0", "translate-y-8");
@@ -33,45 +41,40 @@ export default function PropertyModal({ property, onClose, onSave }) {
     }
   }, []);
 
+  // When editing, load property data (and include seller info).
   useEffect(() => {
     if (property) {
       setFormData({
         title: property.title || "",
         location: property.location || "",
+        neighborhood: property.neighborhood || "",
+        bedrooms: property.bedrooms || "",
+        area: property.area || "",
+        category: property.category || "",
+        date: property.date
+          ? new Date(property.date).toISOString().split("T")[0]
+          : "",
         price: property.price || "",
-        images: property.images || [],
+        photos: property.photos || [],
         description: property.description || "",
+        seller: property.seller || (user ? user.uid : ""),
       });
     }
-  }, [property]);
+  }, [property, user]);
 
-  // Updated handleSubmit uses Firebase Realtime Database to add or update the property.
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (property && property.id) {
-        // Update the existing property record.
-        await update(ref(database, `properties/${property.id}`), formData);
-      } else {
-        // Create a new property record and add a default status of "pending".
-        const newPropertyRef = push(ref(database, "products"));
-        await set(newPropertyRef, { ...formData, status: "pending" });
-      }
-      // Optionally, call onSave to update any local state in a parent component.
-      onSave(formData);
-      onClose();
-    } catch (error) {
-      console.error("Error saving property:", error);
-      // Optionally, add user feedback for errors here.
+  // Ensure seller is set for new properties if user is available.
+  useEffect(() => {
+    if (!property && user) {
+      setFormData((prev) => ({ ...prev, seller: user.uid }));
     }
-  };
+  }, [user, property]);
 
   const handleAddImage = () => {
     const url = prompt("Enter image URL:");
     if (url) {
       setFormData((prev) => ({
         ...prev,
-        images: [...prev.images, url],
+        photos: [...prev.photos, url],
       }));
     }
   };
@@ -79,45 +82,70 @@ export default function PropertyModal({ property, onClose, onSave }) {
   const handleRemoveImage = (index) => {
     setFormData((prev) => ({
       ...prev,
-      images: prev.images.filter((_, i) => i !== index),
+      photos: prev.photos.filter((_, i) => i !== index),
     }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Prepare data for saving.
+      const dataToSave = { ...formData };
+      if (dataToSave.date) {
+        dataToSave.date = new Date(dataToSave.date).getTime();
+      }
+      // Use the service functions: update if editing, create if new.
+      if (property && property.id) {
+        await updateProperty(property.id, dataToSave);
+      } else {
+        await createProperty(dataToSave);
+      }
+      onSave(dataToSave);
+      onClose();
+    } catch (error) {
+      console.error("Error saving property:", error);
+    }
+  };
+
   return (
-    <div className="fixed inset-0 z-50 bg-gray-900/70 backdrop-blur-lg overflow-y-auto">
+    <div className="fixed inset-0 z-50 bg-gray-900/50 backdrop-blur-xl overflow-y-auto">
       <div className="flex items-center justify-center min-h-screen px-4">
         <div
           ref={modalRef}
           className="transform transition-all duration-500 ease-out opacity-0 translate-y-8
-                     bg-gradient-to-br from-white to-indigo-50 w-full max-w-2xl rounded-2xl p-8 relative 
-                     shadow-2xl border border-indigo-100 max-h-[90vh] overflow-y-auto"
+                     bg-gradient-to-br from-white to-indigo-50 w-full max-w-2xl rounded-3xl p-8 relative 
+                     shadow-2xl border-2 border-indigo-50 max-h-[90vh] overflow-y-auto"
         >
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 text-gray-500 hover:text-gray-700 transition-all hover:scale-110"
+            className="absolute top-5 right-5 p-2 text-gray-500 hover:text-indigo-600 transition-all hover:scale-110"
             title="Close"
           >
-            <FaTimes className="w-6 h-6" />
+            <FaTimes className="w-7 h-7" />
           </button>
 
-          <div className="flex items-center gap-3 mb-6">
-            <FaEdit className="text-indigo-600 w-7 h-7" />
-            <h3 className="text-2xl font-bold text-gray-800">
-              {property ? "Edit Property" : "Create New Property"}
+          <div className="flex items-center gap-4 mb-8">
+            <div className="p-3 bg-indigo-100 rounded-xl">
+              <FaEdit className="text-indigo-600 w-8 h-8" />
+            </div>
+            <h3 className="text-3xl font-bold text-gray-800">
+              {property ? "Edit Property" : "New Property Listing"}
             </h3>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Title Field */}
-            <div className="space-y-1">
-              <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <FaHome className="text-indigo-600" />
-                Property Title <span className="text-red-500">*</span>
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
+                <FaHome className="text-indigo-600 w-5 h-5 flex-shrink-0" />
+                <span>
+                  Property Title <span className="text-red-500">*</span>
+                </span>
               </label>
               <input
                 type="text"
                 required
-                className="w-full px-4 py-3 border border-indigo-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all placeholder-gray-400"
                 placeholder="Luxury Beach Villa..."
                 value={formData.title}
                 onChange={(e) =>
@@ -127,33 +155,127 @@ export default function PropertyModal({ property, onClose, onSave }) {
             </div>
 
             {/* Location Field */}
-            <div className="space-y-1">
-              <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <FaMapMarkerAlt className="text-indigo-600" />
-                Location <span className="text-red-500">*</span>
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
+                <FaMapMarkerAlt className="text-indigo-600 w-5 h-5 flex-shrink-0" />
+                <span>
+                  Location <span className="text-red-500">*</span>
+                </span>
               </label>
-              <input
-                type="text"
+              <select
                 required
-                className="w-full px-4 py-3 border border-indigo-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
-                placeholder="123 Ocean Drive, Malibu..."
+                className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
                 value={formData.location}
                 onChange={(e) =>
                   setFormData({ ...formData, location: e.target.value })
                 }
+              >
+                <option value="">Select City</option>
+                <option value="Amman">Amman</option>
+                <option value="Irbid">Irbid</option>
+                <option value="Zarqa">Zarqa</option>
+                <option value="Aqaba">Aqaba</option>
+                <option value="Madaba">Madaba</option>
+              </select>
+            </div>
+
+            {/* Neighborhood Field */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
+                <span className="opacity-0">Icon</span>
+                Neighborhood
+              </label>
+              <input
+                type="text"
+                className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all placeholder-gray-400"
+                placeholder="Enter neighborhood"
+                value={formData.neighborhood}
+                onChange={(e) =>
+                  setFormData({ ...formData, neighborhood: e.target.value })
+                }
               />
             </div>
 
+            {/* Bedrooms and Area Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">
+                  Bedrooms
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
+                  placeholder="Number of bedrooms"
+                  value={formData.bedrooms}
+                  onChange={(e) =>
+                    setFormData({ ...formData, bedrooms: e.target.value })
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">
+                  Area (sq ft)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
+                  placeholder="Enter area in sq ft"
+                  value={formData.area}
+                  onChange={(e) =>
+                    setFormData({ ...formData, area: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* Category and Date Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">
+                  Category
+                </label>
+                <select
+                  required
+                  className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
+                >
+                  <option value="">Select Category</option>
+                  <option value="Historical Homes">Historical Homes</option>
+                  <option value="Villa">Villa</option>
+                  <option value="Castles">Castles</option>
+                  <option value="Amazing pools">Amazing Pools</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">
+                  Date
+                </label>
+                <input
+                  type="date"
+                  className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
+                  value={formData.date}
+                  onChange={(e) =>
+                    setFormData({ ...formData, date: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
             {/* Price Field */}
-            <div className="space-y-1">
-              <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <FaDollarSign className="text-indigo-600" />
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
+                <FaDollarSign className="text-indigo-600 w-5 h-5 flex-shrink-0" />
                 Price per Night
               </label>
               <input
                 type="number"
                 min="0"
-                className="w-full px-4 py-3 border border-indigo-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
                 placeholder="Enter price (optional)"
                 value={formData.price}
                 onChange={(e) =>
@@ -163,13 +285,13 @@ export default function PropertyModal({ property, onClose, onSave }) {
             </div>
 
             {/* Description Field */}
-            <div className="space-y-1">
-              <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                <FaEdit className="text-indigo-600" />
+            <div className="space-y-2">
+              <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
+                <FaEdit className="text-indigo-600 w-5 h-5 flex-shrink-0" />
                 Description
               </label>
               <textarea
-                className="w-full px-4 py-3 border border-indigo-100 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all placeholder-gray-400"
                 rows={4}
                 placeholder="Describe your property's best features..."
                 value={formData.description}
@@ -180,63 +302,65 @@ export default function PropertyModal({ property, onClose, onSave }) {
             </div>
 
             {/* Images Section */}
-            <div className="space-y-3">
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-                  <FaImage className="text-indigo-600" />
+                <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
+                  <FaImage className="text-indigo-600 w-5 h-5" />
                   Property Images
                 </label>
                 <button
                   type="button"
                   onClick={handleAddImage}
-                  className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all hover:shadow-md"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-600 transition-all shadow-md hover:shadow-lg"
                 >
                   <FaImage className="w-4 h-4" />
                   Add Image
                 </button>
               </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                {formData.images.map((url, index) => (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {formData.photos.map((url, index) => (
                   <div key={index} className="relative group">
-                    <img
-                      src={url}
-                      alt={`Property ${index + 1}`}
-                      className="w-full h-32 object-cover rounded-lg shadow-sm transition-transform group-hover:scale-105"
-                      onError={(e) => (e.target.src = defaultBookingIcon)}
-                    />
+                    <div className="aspect-square overflow-hidden rounded-xl shadow-sm">
+                      <img
+                        src={url}
+                        alt={`Property ${index + 1}`}
+                        className="w-full h-full object-cover transform transition-transform duration-300 group-hover:scale-105"
+                        onError={(e) => (e.target.src = defaultBookingIcon)}
+                      />
+                    </div>
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(index)}
-                      className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-2 right-2 p-1.5 bg-red-500/90 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-sm"
                     >
-                      <FaTimes className="w-4 h-4" />
+                      <FaTimes className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 ))}
-                {formData.images.length === 0 && (
-                  <div className="col-span-3 py-6 text-center text-gray-400">
-                    No images added yet
+                {formData.photos.length === 0 && (
+                  <div className="col-span-full py-8 text-center text-gray-400 flex flex-col items-center">
+                    <FaImage className="w-12 h-12 mb-3 opacity-50" />
+                    <span>No images added yet</span>
                   </div>
                 )}
               </div>
             </div>
 
             {/* Form Actions */}
-            <div className="flex justify-end gap-4 pt-6">
+            <div className="flex justify-end gap-4 pt-8">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-6 py-3 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-all hover:shadow-md"
+                className="px-8 py-3.5 bg-gray-100 text-gray-600 rounded-xl hover:bg-gray-200 transition-all shadow-sm hover:shadow-md"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all hover:shadow-md flex items-center gap-2"
+                className="px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-600 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
               >
                 <FaEdit className="w-5 h-5" />
-                {property ? "Update Property" : "Create Property"}
+                {property ? "Update Property" : "Create Listing"}
               </button>
             </div>
           </form>

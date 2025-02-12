@@ -1,84 +1,80 @@
-// SellerDash.jsx
-import React, { useState } from "react";
+//https://random.imagecdn.app/500/150
+import React, { useState, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
-import NavBar from "../navBar/NavBar";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
+import NavBar from "../navBar/NavBar";
 import PropertiesSection from "./sections/PropertiesSection";
 import CalendarSection from "./sections/CalendarSection";
 import BookingsSection from "./sections/BookingsSection";
 import AnalyticsSection from "./sections/AnalyticsSection";
-
-// 1) Import the new ReviewsSection
 import ReviewsSection from "./sections/ReviewsSection";
 
+// Import the property service function.
+import { subscribeToPropertiesBySeller } from "./service/PropertyService";
+
 export default function SellerDash() {
+  const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+
+  // Redirect if no user or if user role is not "seller"
+  useEffect(() => {
+    if (!user || user.role !== "seller") {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Dummy data for properties
-  const [properties, setProperties] = useState([
-    { id: 1, title: "Beach House", location: "Malibu, CA", views: 123 },
-    { id: 2, title: "City Loft", location: "New York, NY", views: 88 },
-  ]);
-
-  // Dummy data for bookings
-  const [bookings, setBookings] = useState([
-    {
-      id: 101,
-      propertyId: 1,
-      guestName: "Alice Smith",
-      status: "Pending",
-    },
-    {
-      id: 102,
-      propertyId: 2,
-      guestName: "Bob Johnson",
-      status: "Pending",
-    },
-  ]);
-
-  // 2) Dummy reviews array
-  const [reviews] = useState([
-    {
-      id: 1,
-      reviewerName: "Alice",
-      rate: 4,
-      comment: "Lovely place, would visit again!",
-    },
-    {
-      id: 2,
-      reviewerName: "Charlie",
-      rate: 5,
-      comment: "Absolutely perfect stay. Highly recommended!",
-    },
-  ]);
+  const [properties, setProperties] = useState([]);
+  const [bookings, setBookings] = useState([]); // Dummy or fetched as needed
+  const [reviews, setReviews] = useState([]);     // Dummy or fetched as needed
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
-  // CRUD handlers for properties
-  const handleAddProperty = (newProp) => {
-    setProperties((prev) => [...prev, { ...newProp, id: Date.now() }]);
-  };
+  // Subscribe to properties where seller equals the current user's UID.
+  useEffect(() => {
+    if (user) {
+      const unsubscribe = subscribeToPropertiesBySeller(user.uid, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          const fetchedProperties = Object.keys(data)
+            .map((key) => ({ id: key, ...data[key] }))
+            .filter((prop) => !prop.deleted); // Exclude soft-deleted properties.
+          setProperties(fetchedProperties);
+        } else {
+          setProperties([]);
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [user]);
+
+  // For add property, we now rely solely on the subscription.
+  // Hence, we pass an empty function for onAddProperty.
   const handleEditProperty = (id, updatedProp) => {
     setProperties((prev) =>
       prev.map((prop) => (prop.id === id ? { ...prop, ...updatedProp } : prop))
     );
   };
+
   const handleRemoveProperty = (id) => {
+    // The removal is handled via soft-delete in Firebase,
+    // so the subscription will update the state automatically.
+    // We can also update local state if needed.
     setProperties((prev) => prev.filter((prop) => prop.id !== id));
   };
 
-  // Bookings
+  // Dummy bookings handler
   const handleBookingAction = (bookingId, action) => {
     setBookings((prev) =>
-      prev.map((b) =>
-        b.id === bookingId ? { ...b, status: action } : b
-      )
+      prev.map((b) => (b.id === bookingId ? { ...b, status: action } : b))
     );
   };
 
   return (
     <div className="relative flex min-h-screen bg-gray-50">
-      {/* Toggle button for mobile */}
+      {/* Mobile sidebar toggle button */}
       <button
         className="sm:hidden fixed bottom-4 right-4 z-50 p-3 bg-indigo-600 text-white rounded-full shadow-lg"
         onClick={toggleSidebar}
@@ -86,13 +82,12 @@ export default function SellerDash() {
         <FaBars />
       </button>
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col">
         <NavBar />
         <main className="p-4 sm:p-6 overflow-y-auto space-y-6">
           <PropertiesSection
             properties={properties}
-            onAddProperty={handleAddProperty}
+            onAddProperty={() => {}} // rely solely on Firebase subscription
             onEditProperty={handleEditProperty}
             onRemoveProperty={handleRemoveProperty}
           />
@@ -107,7 +102,6 @@ export default function SellerDash() {
 
           <AnalyticsSection properties={properties} bookings={bookings} />
 
-          {/* 3) Insert the new ReviewsSection here */}
           <ReviewsSection reviews={reviews} />
         </main>
       </div>

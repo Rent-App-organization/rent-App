@@ -2,10 +2,6 @@ import React, { useState } from "react";
 import { FaPlus, FaTrash, FaEdit } from "react-icons/fa";
 import PropertyModal from "../modals/PropertyModal";
 
-// A fallback image if the property has no images
-const PLACEHOLDER_IMAGE =
-  "https://via.placeholder.com/400x250.png?text=No+Image";
-
 export default function PropertiesSection({
   properties,
   onAddProperty,
@@ -37,13 +33,13 @@ export default function PropertiesSection({
   };
 
   return (
-    <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">
+    <section className="bg-white/95 rounded-2xl shadow-xl border border-gray-200 p-6 sm:p-8">
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-0">
           Property Management
         </h2>
         <button
-          className="inline-flex items-center px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
+          className="inline-flex items-center px-5 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full hover:from-indigo-700 hover:to-purple-700 transition-colors shadow-md"
           onClick={() => openModal()}
         >
           <FaPlus className="mr-2" />
@@ -54,58 +50,58 @@ export default function PropertiesSection({
       {properties.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {properties.map((property) => {
-            // We'll show the first image, or a placeholder if none
-            const hasImages = property.images && property.images.length > 0;
-            const thumbnail = hasImages
-              ? property.images[0]
-              : PLACEHOLDER_IMAGE;
-
+            const hasPhotos = property.photos && property.photos.length > 0;
             return (
               <div
                 key={property.id}
-                className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
+                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:-translate-y-1"
               >
                 {/* Top Image */}
-                <img
-                  src={thumbnail}
-                  alt={property.title || "Property"}
-                  className="w-full h-44 object-cover"
-                />
+                {hasPhotos ? (
+                  <img
+                    src={property.photos[0]}
+                    alt={property.title || "Property"}
+                    className="w-full h-48 sm:h-56 md:h-60 object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-48 sm:h-56 md:h-60 flex items-center justify-center bg-gray-100">
+                    <span className="text-gray-500">No Image Available</span>
+                  </div>
+                )}
 
                 {/* Card Content */}
-                <div className="p-4 flex flex-col flex-1 justify-between">
+                <div className="p-4 sm:p-6 flex flex-col flex-1 justify-between">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 line-clamp-1">
                       {property.title}
                     </h3>
-                    <p className="text-sm text-gray-500 mb-2 line-clamp-1">
+                    <p className="text-sm sm:text-md text-gray-600 mb-3 line-clamp-1">
                       {property.location || "No location"}
                     </p>
-
-                    <div className="text-sm text-gray-700 space-y-1">
+                    <div className="text-xs sm:text-sm text-gray-700 space-y-1">
                       <p>
                         <strong>Price:</strong>{" "}
                         {property.price ? `$${property.price}` : "N/A"}
                       </p>
                       <p>
                         <strong>Images:</strong>{" "}
-                        {hasImages
-                          ? `${property.images.length} images`
+                        {hasPhotos
+                          ? `${property.photos.length} images`
                           : "No images"}
                       </p>
                     </div>
                   </div>
 
                   {/* Card Actions */}
-                  <div className="flex items-center justify-end mt-3 space-x-2">
+                  <div className="flex items-center justify-end mt-4 space-x-3">
                     <button
-                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
                       onClick={() => openModal(property)}
                     >
                       <FaEdit />
                     </button>
                     <button
-                      className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                      className="px-3 py-1 bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
                       onClick={() => onRemoveProperty(property.id)}
                     >
                       <FaTrash />
@@ -117,7 +113,7 @@ export default function PropertiesSection({
           })}
         </div>
       ) : (
-        <p className="text-center text-gray-500 mt-6">
+        <p className="text-center text-gray-500 mt-8">
           No properties found. Click "Add Property" to create one.
         </p>
       )}
