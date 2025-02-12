@@ -41,13 +41,13 @@ export default function SellerDash() {
     {
       id: 1,
       reviewerName: "Alice",
-      rating: 4,
+      rate: 4,
       comment: "Lovely place, would visit again!",
     },
     {
       id: 2,
       reviewerName: "Charlie",
-      rating: 5,
+      rate: 5,
       comment: "Absolutely perfect stay. Highly recommended!",
     },
   ]);

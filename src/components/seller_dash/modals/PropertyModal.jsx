@@ -75,21 +75,22 @@ export default function PropertyModal({ property, onClose, onSave }) {
     width: "100%",
     height: "300px",
     borderRadius: "12px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/70 backdrop-blur-lg">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-20 bg-gray-900/70 backdrop-blur-lg">
       <div
         ref={modalRef}
         className="transform transition-all duration-500 ease-out opacity-0 translate-y-8
                    bg-gradient-to-br from-white to-indigo-50 w-full max-w-2xl rounded-2xl p-8 relative 
-                   shadow-2xl border border-indigo-100"
+                   shadow-2xl border border-indigo-100 max-h-[90vh] overflow-y-auto"
       >
         <button
           onClick={onClose}
           className="absolute top-5 right-5 p-2 text-gray-500 hover:text-gray-700 
-                    transition-all hover:scale-110"
+                     transition-all hover:scale-110"
+          title="Close"
         >
           <FaTimes className="w-6 h-6" />
         </button>
@@ -161,7 +162,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
             </label>
             <textarea
               className="w-full px-4 py-3 border border-indigo-100 rounded-lg focus:ring-2
-                        focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                         focus:ring-indigo-500 focus:border-indigo-500 transition-all"
               rows={4}
               placeholder="Describe your property's best features..."
               value={formData.description}
@@ -169,7 +170,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
             />
           </div>
 
-          {/* Image Management */}
+          {/* Images Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
@@ -195,7 +196,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
                     alt={`Property ${index + 1}`}
                     className="w-full h-32 object-cover rounded-lg shadow-sm transition-transform
                              group-hover:scale-105"
-                    onError={(e) => e.target.src = defaultBookingIcon}
+                    onError={(e) => (e.target.src = defaultBookingIcon)}
                   />
                   <button
                     type="button"
@@ -217,28 +218,30 @@ export default function PropertyModal({ property, onClose, onSave }) {
 
           {/* Map Section */}
           <div className="space-y-3">
-            <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
-              <FaMapMarkerAlt className="text-indigo-600" />
-              Property Location on Map
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              <FaMapMarkerAlt className="inline-block text-indigo-600 mr-1" />
+              Select Property Location on Map (optional)
             </label>
-            <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-              <GoogleMap
-                mapContainerStyle={mapContainerStyle}
-                center={center}
-                zoom={formData.lat && formData.lng ? 14 : 2}
-                onClick={handleMapClick}
-              >
-                {formData.lat && formData.lng && (
-                  <Marker 
-                    position={{ lat: formData.lat, lng: formData.lng }} 
-                    icon={{
-                      url: `https://maps.google.com/mapfiles/ms/icons/red-dot.png`,
-                      scaledSize: new window.google.maps.Size(40, 40)
-                    }}
-                  />
-                )}
-              </GoogleMap>
-            </LoadScript>
+            <div className="overflow-hidden rounded border border-indigo-100 shadow-sm">
+              <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+                <GoogleMap
+                  mapContainerStyle={mapContainerStyle}
+                  center={center}
+                  zoom={formData.lat && formData.lng ? 14 : 2}
+                  onClick={handleMapClick}
+                >
+                  {formData.lat && formData.lng && (
+                    <Marker 
+                      position={{ lat: formData.lat, lng: formData.lng }} 
+                      icon={{
+                        url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
+                        scaledSize: new window.google.maps.Size(40, 40),
+                      }}
+                    />
+                  )}
+                </GoogleMap>
+              </LoadScript>
+            </div>
             {formData.lat && formData.lng && (
               <div className="px-3 py-2 bg-indigo-100 text-indigo-700 rounded-lg text-sm">
                 Selected Coordinates: ({formData.lat.toFixed(5)}, {formData.lng.toFixed(5)})
