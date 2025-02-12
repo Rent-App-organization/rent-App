@@ -1,9 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { LoadScript, GoogleMap, Marker } from "@react-google-maps/api";
-import { FaTimes, FaImage, FaMapMarkerAlt, FaDollarSign, FaHome, FaEdit } from "react-icons/fa";
+import {
+  FaTimes,
+  FaImage,
+  FaMapMarkerAlt,
+  FaDollarSign,
+  FaHome,
+  FaEdit,
+} from "react-icons/fa";
 
 const defaultBookingIcon = "https://random.imagecdn.app/500/150";
-const GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY";
 
 export default function PropertyModal({ property, onClose, onSave }) {
   const [formData, setFormData] = useState({
@@ -12,8 +17,6 @@ export default function PropertyModal({ property, onClose, onSave }) {
     price: "",
     images: [],
     description: "",
-    lat: null,
-    lng: null,
   });
 
   const modalRef = useRef(null);
@@ -33,8 +36,6 @@ export default function PropertyModal({ property, onClose, onSave }) {
         price: property.price || "",
         images: property.images || [],
         description: property.description || "",
-        lat: property.lat || null,
-        lng: property.lng || null,
       });
     }
   }, [property]);
@@ -59,23 +60,6 @@ export default function PropertyModal({ property, onClose, onSave }) {
       ...prev,
       images: prev.images.filter((_, i) => i !== index),
     }));
-  };
-
-  const handleMapClick = (e) => {
-    const lat = e.latLng.lat();
-    const lng = e.latLng.lng();
-    setFormData((prev) => ({ ...prev, lat, lng }));
-  };
-
-  const center = formData.lat && formData.lng
-    ? { lat: formData.lat, lng: formData.lng }
-    : { lat: 40.7128, lng: -74.006 };
-
-  const mapContainerStyle = {
-    width: "100%",
-    height: "300px",
-    borderRadius: "12px",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
   };
 
   return (
@@ -116,7 +100,9 @@ export default function PropertyModal({ property, onClose, onSave }) {
                          focus:ring-indigo-500 focus:border-indigo-500 transition-all"
               placeholder="Luxury Beach Villa..."
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
             />
           </div>
 
@@ -133,7 +119,9 @@ export default function PropertyModal({ property, onClose, onSave }) {
                          focus:ring-indigo-500 focus:border-indigo-500 transition-all"
               placeholder="123 Ocean Drive, Malibu..."
               value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, location: e.target.value })
+              }
             />
           </div>
 
@@ -150,7 +138,9 @@ export default function PropertyModal({ property, onClose, onSave }) {
                          focus:ring-indigo-500 focus:border-indigo-500 transition-all"
               placeholder="Enter price (optional)"
               value={formData.price}
-              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, price: e.target.value })
+              }
             />
           </div>
 
@@ -166,7 +156,9 @@ export default function PropertyModal({ property, onClose, onSave }) {
               rows={4}
               placeholder="Describe your property's best features..."
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
             />
           </div>
 
@@ -187,7 +179,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
                 Add Image
               </button>
             </div>
-            
+
             <div className="grid grid-cols-3 gap-4">
               {formData.images.map((url, index) => (
                 <div key={index} className="relative group">
@@ -214,39 +206,6 @@ export default function PropertyModal({ property, onClose, onSave }) {
                 </div>
               )}
             </div>
-          </div>
-
-          {/* Map Section */}
-          <div className="space-y-3">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              <FaMapMarkerAlt className="inline-block text-indigo-600 mr-1" />
-              Select Property Location on Map (optional)
-            </label>
-            <div className="overflow-hidden rounded border border-indigo-100 shadow-sm">
-              <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-                <GoogleMap
-                  mapContainerStyle={mapContainerStyle}
-                  center={center}
-                  zoom={formData.lat && formData.lng ? 14 : 2}
-                  onClick={handleMapClick}
-                >
-                  {formData.lat && formData.lng && (
-                    <Marker 
-                      position={{ lat: formData.lat, lng: formData.lng }} 
-                      icon={{
-                        url: "https://maps.google.com/mapfiles/ms/icons/red-dot.png",
-                        scaledSize: new window.google.maps.Size(40, 40),
-                      }}
-                    />
-                  )}
-                </GoogleMap>
-              </LoadScript>
-            </div>
-            {formData.lat && formData.lng && (
-              <div className="px-3 py-2 bg-indigo-100 text-indigo-700 rounded-lg text-sm">
-                Selected Coordinates: ({formData.lat.toFixed(5)}, {formData.lng.toFixed(5)})
-              </div>
-            )}
           </div>
 
           {/* Form Actions */}
