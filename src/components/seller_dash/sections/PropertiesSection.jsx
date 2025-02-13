@@ -1,17 +1,34 @@
-import React, { useState } from "react";
-import { FaPlus, FaTrash, FaEdit } from "react-icons/fa";
+import React, { useState, useMemo } from "react";
+import { 
+  FaPlus, 
+  FaRegImage, 
+  FaRegFolderOpen, 
+  FaEdit, 
+  FaTrash 
+} from "react-icons/fa";
 import PropertyModal from "../modals/PropertyModal";
+import RejectedPropertyCard from "../containers/RejectedPropertyCard"; // Adjust path as needed
 
 export default function PropertiesSection({
   properties,
   onAddProperty,
   onEditProperty,
   onRemoveProperty,
+  onOpenDepositModal, // Received from SellerDash.jsx
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProperty, setEditingProperty] = useState(null);
 
-  // Open modal for new or existing property
+  // Memoize filtered properties by status.
+  const [approvedProperties, pendingProperties, rejectedProperties] = useMemo(
+    () => [
+      properties.filter((p) => p.status?.toLowerCase() === "approved"),
+      properties.filter((p) => p.status?.toLowerCase() === "pending"),
+      properties.filter((p) => p.status?.toLowerCase() === "rejected"),
+    ],
+    [properties]
+  );
+
   const openModal = (prop = null) => {
     setEditingProperty(prop);
     setIsModalOpen(true);
@@ -22,7 +39,6 @@ export default function PropertiesSection({
     setEditingProperty(null);
   };
 
-  // Handle save (new or existing)
   const handleSave = (formData) => {
     if (editingProperty) {
       onEditProperty(editingProperty.id, formData);
@@ -32,96 +48,154 @@ export default function PropertiesSection({
     closeModal();
   };
 
-  return (
-    <section className="bg-white/95 rounded-2xl shadow-xl border border-gray-200 p-6 sm:p-8">
-      <div className="flex flex-col sm:flex-row items-center justify-between mb-6">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 sm:mb-0">
-          Property Management
-        </h2>
-        <button
-          className="inline-flex items-center px-5 py-2 sm:px-6 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full hover:from-indigo-700 hover:to-purple-700 transition-colors shadow-md"
-          onClick={() => openModal()}
-        >
-          <FaPlus className="mr-2" />
-          Add Property
-        </button>
+  // Unique design for Approved and Pending properties.
+  const UniquePropertyCard = ({ property }) => {
+    const hasPhotos = property.photos && property.photos.length > 0;
+    const imageUrl = hasPhotos ? property.photos[0] : null;
+    return (
+      <div className="relative group rounded-xl overflow-hidden shadow-lg transform transition duration-300 hover:scale-105">
+        {/* Background Image or Fallback */}
+        {hasPhotos ? (
+          <img
+            src={imageUrl}
+            alt={property.title}
+            className="h-64 w-full object-cover"
+          />
+        ) : (
+          <div className="h-64 w-full bg-gray-100 flex items-center justify-center">
+            <FaRegImage className="w-16 h-16 text-gray-400" />
+          </div>
+        )}
+
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60"></div>
+
+        {/* Property Details */}
+        <div className="absolute bottom-0 p-4">
+          <h3 className="text-xl font-bold text-white">
+            {property.title || "Untitled Property"}
+          </h3>
+          <p className="text-sm text-gray-200">
+            {property.location || "No location specified"}
+          </p>
+          <div className="mt-2 flex items-center space-x-4 text-sm text-white">
+            <span>
+              <span className="font-medium">Price:</span>{" "}
+              {property.price
+                ? `$${Number(property.price).toLocaleString()}`
+                : "N/A"}
+            </span>
+            <span>
+              {hasPhotos ? `${property.photos.length} photos` : "No photos"}
+            </span>
+          </div>
+        </div>
+
+        {/* Action Buttons (appear on hover) */}
+        <div className="absolute top-2 right-2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            onClick={() => openModal(property)}
+            className="bg-white p-2 rounded-full text-indigo-600 hover:bg-indigo-100"
+            title="Edit property"
+          >
+            <FaEdit className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => onRemoveProperty(property.id)}
+            className="bg-white p-2 rounded-full text-red-600 hover:bg-red-100"
+            title="Delete property"
+          >
+            <FaTrash className="w-5 h-5" />
+          </button>
+        </div>
       </div>
+    );
+  };
 
-      {properties.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {properties.map((property) => {
-            const hasPhotos = property.photos && property.photos.length > 0;
-            return (
-              <div
-                key={property.id}
-                className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:-translate-y-1"
-              >
-                {/* Top Image */}
-                {hasPhotos ? (
-                  <img
-                    src={property.photos[0]}
-                    alt={property.title || "Property"}
-                    className="w-full h-48 sm:h-56 md:h-60 object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-48 sm:h-56 md:h-60 flex items-center justify-center bg-gray-100">
-                    <span className="text-gray-500">No Image Available</span>
-                  </div>
-                )}
-
-                {/* Card Content */}
-                <div className="p-4 sm:p-6 flex flex-col flex-1 justify-between">
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 line-clamp-1">
-                      {property.title}
-                    </h3>
-                    <p className="text-sm sm:text-md text-gray-600 mb-3 line-clamp-1">
-                      {property.location || "No location"}
-                    </p>
-                    <div className="text-xs sm:text-sm text-gray-700 space-y-1">
-                      <p>
-                        <strong>Price:</strong>{" "}
-                        {property.price ? `$${property.price}` : "N/A"}
-                      </p>
-                      <p>
-                        <strong>Images:</strong>{" "}
-                        {hasPhotos
-                          ? `${property.photos.length} images`
-                          : "No images"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Card Actions */}
-                  <div className="flex items-center justify-end mt-4 space-x-3">
-                    <button
-                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full hover:bg-blue-200 transition-colors"
-                      onClick={() => openModal(property)}
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      className="px-3 py-1 bg-red-100 text-red-700 rounded-full hover:bg-red-200 transition-colors"
-                      onClick={() => onRemoveProperty(property.id)}
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+  // StatusSection renders a heading and a grid of property cards.
+  const StatusSection = ({ title, count, color, properties, isRejected }) => (
+    <div className="mb-10">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className={`text-2xl font-bold ${color}`}>{title}</h3>
+        <span className="px-3 py-1 text-sm font-medium rounded-full bg-gray-200 text-gray-700">
+          {count} properties
+        </span>
+      </div>
+      {count > 0 ? (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {properties.map((prop) =>
+            isRejected ? (
+              <RejectedPropertyCard
+                key={prop.id}
+                property={prop}
+                onEdit={openModal}
+                onRemove={onRemoveProperty}
+                onOpenDepositModal={onOpenDepositModal} // Pass the function
+              />
+            ) : (
+              <UniquePropertyCard key={prop.id} property={prop} />
+            )
+          )}
         </div>
       ) : (
-        <p className="text-center text-gray-500 mt-8">
-          No properties found. Click "Add Property" to create one.
-        </p>
+        <div className="py-8 text-center rounded-xl bg-gray-50">
+          <FaRegFolderOpen className="mx-auto text-3xl text-gray-300 mb-3" />
+          <p className="text-gray-400">No properties found</p>
+        </div>
       )}
+    </div>
+  );
 
-      {/* Modal for Add/Edit */}
+  return (
+    <section className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
+      {/* Header Section */}
+      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 px-6 sm:px-8 py-6 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-800">
+              Property Management
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Manage your property listings and statuses
+            </p>
+          </div>
+          <button
+            onClick={() => openModal()}
+            className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors shadow-sm whitespace-nowrap"
+          >
+            <FaPlus className="w-4 h-4" />
+            Add Property
+          </button>
+        </div>
+      </div>
+
+      {/* Content Section */}
+      <div className="p-6 sm:p-8">
+        <StatusSection
+          title="Approved Properties"
+          color="text-green-600"
+          count={approvedProperties.length}
+          properties={approvedProperties}
+        />
+        <StatusSection
+          title="Pending Approval"
+          color="text-amber-600"
+          count={pendingProperties.length}
+          properties={pendingProperties}
+        />
+        <StatusSection
+          title="Rejected Properties"
+          color="text-red-600"
+          count={rejectedProperties.length}
+          properties={rejectedProperties}
+          isRejected
+        />
+      </div>
+
+      {/* Property Modal for Add/Edit */}
       {isModalOpen && (
         <PropertyModal
-          property={editingProperty} // or null for new
+          property={editingProperty}
           onClose={closeModal}
           onSave={handleSave}
         />

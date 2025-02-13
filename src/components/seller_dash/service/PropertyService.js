@@ -1,4 +1,3 @@
-// PropertyService.js
 import {
   ref,
   push,
@@ -9,45 +8,56 @@ import {
   equalTo,
   onValue,
 } from "firebase/database";
-import { database } from "../../../fireBaseConfig"; // Adjust the path as needed
+import { database } from "../../../fireBaseConfig";
 
 /**
  * Creates a new property record.
- * @param {Object} data - The property data to save.
- * @returns {Promise} - A promise that resolves when the property is created.
  */
 export async function createProperty(data) {
   const newPropertyRef = push(ref(database, "products"));
-  return set(newPropertyRef, { ...data, status: "pending" });
+  return set(newPropertyRef, { ...data, status: "pending", deleted: false });
 }
 
 /**
  * Updates an existing property record.
- * @param {string} propertyId - The ID of the property to update.
- * @param {Object} data - The property data to update.
- * @returns {Promise} - A promise that resolves when the property is updated.
  */
 export async function updateProperty(propertyId, data) {
   return update(ref(database, `products/${propertyId}`), data);
 }
 
 /**
- * Soft deletes a property by setting its "deleted" field to true.
- * @param {string} propertyId - The ID of the property to soft delete.
- * @returns {Promise} - A promise that resolves when the property is updated.
+ * Soft deletes a property (marks it as deleted).
  */
 export async function softDeleteProperty(propertyId) {
+  console.log(`Soft deleting property: ${propertyId}`);
   return update(ref(database, `products/${propertyId}`), { deleted: true });
 }
 
 /**
- * Subscribes to properties where the seller field matches the given sellerId.
- * @param {string} sellerId - The seller UID to filter by.
- * @param {function} callback - Callback function receiving the snapshot.
- * @returns {function} - A function to unsubscribe the listener.
+ * Subscribe to seller properties and exclude soft-deleted ones.
  */
 export function subscribeToPropertiesBySeller(sellerId, callback) {
   const propertiesRef = ref(database, "products");
   const q = query(propertiesRef, orderByChild("seller"), equalTo(sellerId));
-  return onValue(q, callback);
+  return onValue(q, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      const fetchedProperties = Object.keys(data)
+        .map((key) => ({ id: key, ...data[key] }))
+        .filter((prop) => !prop.deleted); // Exclude soft-deleted properties
+      callback(fetchedProperties);
+    } else {
+      callback([]);
+    }
+  });
+}
+
+/**
+ * Sends a deposit request by updating the product record with the deposit request message.
+ * This simply adds (or updates) the `depositRequest` field in the product.
+ */
+export async function sendDepositRequest(propertyId, message) {
+  return update(ref(database, `products/${propertyId}`), {
+    depositRequest: message,
+  });
 }
