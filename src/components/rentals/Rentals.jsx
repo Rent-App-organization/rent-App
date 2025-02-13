@@ -2,7 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../navBar/NavBar";
 import { FaSearch } from "react-icons/fa";
-import { fetchRentals } from "../../redux/rentalSlice";
+import axios from "axios";
+import { setRentals, setLoading, setError } from "../../redux/rentalSlice";
 import background from "./assets/houses_bg.jpg";
 import RentalCard from "./RentalCard";
 
@@ -10,15 +11,44 @@ const Rentals = () => {
   const dispatch = useDispatch();
   const { rentals, categories, loading, error } = useSelector((state) => state.rentals);
   const scrollRef = useRef(null);
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState(""); // State for search input
 
-  // Pagination State
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState(""); // Search input state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8; // Number of rentals per page
 
   useEffect(() => {
-    dispatch(fetchRentals());
+    const fetchRentals = async () => {
+      dispatch(setLoading());
+
+      try {
+        const response = await axios.get(
+          "https://rental-website-bb300-default-rtdb.firebaseio.com/products.json"
+        );
+        const data = response.data;
+
+        if (!data) {
+          dispatch(setError("No rentals found."));
+          return;
+        }
+
+        // Convert Firebase object to an array
+        const rentalsArray = Object.entries(data).map(([id, rental]) => ({
+          id,
+          ...rental,
+        }));
+
+        // Extract unique categories
+        const uniqueCategories = [...new Set(rentalsArray.map((rental) => rental.category))];
+
+        dispatch(setRentals({ rentals: rentalsArray, categories: uniqueCategories }));
+      } catch (error) {
+        console.error("Fetch rentals error:", error);
+        dispatch(setError("Failed to fetch rentals. Please try again later."));
+      }
+    };
+
+    fetchRentals();
   }, [dispatch]);
 
   // Filter rentals based on category and search query
@@ -33,7 +63,7 @@ const Rentals = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentRentals = filteredRentals.slice(indexOfFirstItem, indexOfLastItem);
 
-  // Handle Pagination Buttons
+  // Handle Pagination
   const totalPages = Math.ceil(filteredRentals.length / itemsPerPage);
   const nextPage = () => setCurrentPage((prev) => (prev < totalPages ? prev + 1 : prev));
   const prevPage = () => setCurrentPage((prev) => (prev > 1 ? prev - 1 : prev));
@@ -46,10 +76,7 @@ const Rentals = () => {
       <Navbar />
       <div className="bg-gray-100 min-h-screen">
         {/* Hero Section */}
-        <div
-          className="relative h-[500px] bg-cover bg-center"
-          style={{ backgroundImage: `url(${background})` }}
-        >
+        <div className="relative h-[500px] bg-cover bg-center" style={{ backgroundImage: `url(${background})` }}>
           <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center text-white px-6 text-center">
             <h1 className="text-4xl font-bold">Find Your Dream Villa</h1>
             <p className="text-lg mt-2">
@@ -75,9 +102,7 @@ const Rentals = () => {
 
         {/* Categories Section */}
         <div className="max-w-6xl mx-auto py-8 px-4">
-          <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
-            Browse by Category
-          </h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Browse by Category</h2>
 
           <div className="relative flex items-center">
             {/* Categories List */}
