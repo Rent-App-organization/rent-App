@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Navbar from "../navBar/NavBar"
-
+import Footer from "../footer/Footer";
 const Wishlist = () => {
   const [properties, setProperties] = useState([
     {
@@ -71,11 +71,8 @@ const Wishlist = () => {
 
         </div>
       </div>
-
-      {/* 📌 Footer */}
-      <footer className="text-center mt-10 text-gray-700">
-        © 2025 Dream Properties. All rights reserved.
-      </footer>
+            <Footer />
+      
     </div>
   );
 };

@@ -1,32 +1,30 @@
 import { useState } from "react";
 import { database } from "/src/firebaseConfig";
-import { ref, push } from "firebase/database"; // ✅ استيراد وظائف Realtime Database
+import { ref, push } from "firebase/database";
 import ChatBot from "react-simple-chatbot";
 import { ThemeProvider } from "styled-components";
 import Navbar from "../navBar/NavBar";
+import Footer from "../footer/Footer";
 
 const Contact = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });
 
-  // 🔹 تحديث بيانات النموذج عند الكتابة
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // ✅ حفظ بيانات المستخدم في Firebase Realtime Database
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await push(ref(database, "contactMessages"), formData); // ✅ حفظ البيانات في Realtime Database
+      await push(ref(database, "contactMessages"), formData);
       alert("Message sent successfully!");
-      setFormData({ name: "", email: "", message: "" }); // ✅ إعادة تعيين الحقول بعد الإرسال
+      setFormData({ name: "", email: "", message: "" });
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
 
-  // ✅ إعداد خطوات الشات بوت بدون تكرار الإجابات
   const steps = [
     { id: "1", message: "Hello! How can I assist you today? 😊", trigger: "2" },
     {
@@ -50,91 +48,75 @@ const Contact = () => {
   ];
 
   const theme = {
-    background: "#f0f7ff",
+    background: "#E5EAF5",
     fontFamily: "Arial",
-    headerBgColor: "#004aad",
+    headerBgColor: "#6C7A9C",
     headerFontColor: "#fff",
-    botBubbleColor: "#004aad",
+    botBubbleColor: "#6C7A9C",
     botFontColor: "#fff",
-    userBubbleColor: "#1a73e8",
+    userBubbleColor: "#4A5A7A",
     userFontColor: "#fff",
   };
 
   const toggleChat = () => setIsChatOpen(!isChatOpen);
-
-  // ✅ إغلاق الشات بوت باستخدام زر "X" مباشرة
-  const closeChat = () => {
-    setIsChatOpen(false);
-  };
+  const closeChat = () => setIsChatOpen(false);
 
   return (
     <div
-    className="bg-blue-50"
-    style={{
-      backgroundImage: "url('/api/placeholder/400/320')",
-      backgroundSize: "cover",
-      backgroundPosition: "center"
-    }}
+      className="bg-blue-50"
+      style={{
+        backgroundColor: "#E5EAF5",
+        backgroundSize: "cover",
+        backgroundPosition: "center"
+      }}
     >
       <Navbar />
 
       <div className="min-h-screen flex flex-col items-center py-20 px-5">
         <div className="w-full max-w-4xl space-y-8">
-          {/* 📩 Contact Form */}
-          <div className="bg-white p-6 rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-blue-700 text-center mb-4">📩 Contact Us</h2>
+          <div className="bg-[#6C7A9C] p-6 rounded-lg shadow-md text-white">
+            <h2 className="text-2xl font-bold text-center mb-4">📩 Contact Us</h2>
             <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-              <label className="text-lg font-semibold text-gray-700">Name</label>
+              <label className="text-lg font-semibold">Name</label>
               <input
                 type="text"
                 name="name"
                 placeholder="✍️ Your Name"
                 value={formData.name}
                 onChange={handleChange}
-                className="p-3 border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="p-3 border-2 border-[#4A5A7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#394863] text-black"
                 required
               />
 
-              <label className="text-lg font-semibold text-gray-700">Email</label>
+              <label className="text-lg font-semibold">Email</label>
               <input
                 type="email"
                 name="email"
                 placeholder="📧 Your Email"
                 value={formData.email}
                 onChange={handleChange}
-                className="p-3 border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="p-3 border-2 border-[#4A5A7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#394863] text-black"
                 required
               />
 
-              <label className="text-lg font-semibold text-gray-700">Message</label>
+              <label className="text-lg font-semibold">Message</label>
               <textarea
                 name="message"
                 rows="4"
                 placeholder="📝 Write your message..."
                 value={formData.message}
                 onChange={handleChange}
-                className="p-3 border-2 border-blue-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="p-3 border-2 border-[#4A5A7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#394863] text-black"
                 required
               ></textarea>
 
-              <button className="bg-blue-600 text-white py-3 rounded-lg text-lg font-bold hover:bg-blue-700 transition duration-300">
+              <button className="bg-[#4A5A7A] text-white py-3 rounded-lg text-lg font-bold hover:bg-[#394863] transition duration-300">
                 🚀 Send Message
               </button>
             </form>
           </div>
-
-          {/* 📞 Contact Buttons */}
-          <div className="flex justify-center space-x-4">
-            <a href="mailto:support@example.com" className="bg-blue-600 text-white py-3 px-6 rounded-lg text-lg font-bold hover:bg-blue-700 transition duration-300">
-              📧 Email Us
-            </a>
-            <a href="https://wa.me/1234567890" className="bg-green-500 text-white py-3 px-6 rounded-lg text-lg font-bold hover:bg-green-600 transition duration-300">
-              💬 WhatsApp
-            </a>
-          </div>
         </div>
 
-        {/* 🗺️ Google Map */}
         <div className="w-full mt-8">
           <iframe
             src="https://maps.google.com/maps?q=your-location&output=embed"
@@ -143,27 +125,21 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* 🤖 ChatBot Button */}
-      <div onClick={toggleChat} className="fixed bottom-10 right-10 bg-blue-600 p-4 rounded-full shadow-lg cursor-pointer transition duration-300 hover:bg-blue-700">
+      <div onClick={toggleChat} className="fixed bottom-10 right-10 bg-[#5A6988] p-4 rounded-full shadow-lg cursor-pointer transition duration-300 hover:bg-[#394863]">
         <span className="text-white text-xl">🤖</span>
       </div>
 
-      {/* 🤖 ChatBot */}
       {isChatOpen && (
         <div className="fixed bottom-20 right-10 w-80 h-96 bg-white rounded-lg shadow-lg z-50">
           <ThemeProvider theme={theme}>
             <div className="flex justify-end p-2">
-              <button
-                onClick={closeChat}
-                className="text-black text-2xl font-bold p-2"
-              >
-                X
-              </button>
+              <button onClick={closeChat} className="text-black text-2xl font-bold p-2">X</button>
             </div>
             <ChatBot steps={steps} handleEnd={closeChat} />
           </ThemeProvider>
         </div>
       )}
+      <Footer />
     </div>
   );
 };
