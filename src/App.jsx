@@ -44,7 +44,7 @@ function App() {
       element: <Rentals />,
     },
     {
-      path: '/PropertyDetails',
+      path: '/PropertyDetails/:id',
       element: <PropertyDetails />,
     },
     {
