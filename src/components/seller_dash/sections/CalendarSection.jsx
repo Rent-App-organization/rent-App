@@ -1,153 +1,242 @@
-// CalendarSection.jsx
 import React, { useState, useMemo } from "react";
 import dayjs from "dayjs";
-import { FaCalendarAlt } from "react-icons/fa";
+import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaHome } from "react-icons/fa";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-// Example property booking data: propertyId -> array of booked dates
-const propertyBookings = {
-  101: ["2025-03-10", "2025-03-12", "2025-03-20"],
-  102: ["2025-03-08", "2025-03-15"],
-  103: ["2025-03-01", "2025-03-02", "2025-03-20"],
-};
-
-export default function CalendarSection() {
-  // Let's default to property 101 (Beach House).
-  // Or you can default to "" meaning "All" if you want a combined view.
-  const [selectedProperty, setSelectedProperty] = useState("101");
-
-  // We'll default to the current month
+export default function CalendarSection({ bookings, properties, onToggleBlockedDate }) {
+  // Default to first property in the list.
+  const [selectedProperty, setSelectedProperty] = useState(
+    properties && properties.length > 0 ? properties[0].id : ""
+  );
   const [currentDate, setCurrentDate] = useState(dayjs());
 
-  // 1) Figure out the "bookedDates" for the selected property
-  const bookedDates = propertyBookings[selectedProperty] || [];
+  // For the block/unblock modal.
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [blockModalOpen, setBlockModalOpen] = useState(false);
 
-  // 2) Generate the days for the current month
+  // Get the selected property object.
+  const selectedPropertyObj = properties.find(p => p.id === selectedProperty);
+  const propertyBlocked = selectedPropertyObj?.blockedDates || [];
+
+  // Compute booked dates for the selected property.
+  const bookedDates = useMemo(() => {
+    if (!bookings) return [];
+    const dates = [];
+    bookings.filter(b => b.productId === selectedProperty)
+      .forEach(booking => {
+        const start = dayjs(booking.startDate);
+        const end = dayjs(booking.endDate);
+        for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
+          dates.push(d.format("YYYY-MM-DD"));
+        }
+      });
+    return dates;
+  }, [bookings, selectedProperty]);
+
+  // Build the calendar matrix.
   const calendarMatrix = useMemo(() => {
     const startOfMonth = currentDate.startOf("month");
     const startDay = startOfMonth.day();
     const daysInMonth = currentDate.daysInMonth();
-
-    let calendarDays = [];
-    // Fill in days from previous month so the first row is complete
-    for (let i = 0; i < startDay; i++) {
-      calendarDays.push(null);
-    }
-    // Fill in actual days for this month
-    for (let d = 1; d <= daysInMonth; d++) {
-      calendarDays.push(currentDate.date(d));
-    }
+    const calendarDays = [];
+    for (let i = 0; i < startDay; i++) calendarDays.push(null);
+    for (let d = 1; d <= daysInMonth; d++) calendarDays.push(currentDate.date(d));
     return calendarDays;
   }, [currentDate]);
 
-  // Go prev/next month
-  const goToPrevMonth = () => setCurrentDate((prev) => prev.subtract(1, "month"));
-  const goToNextMonth = () => setCurrentDate((prev) => prev.add(1, "month"));
+  const goToPrevMonth = () => setCurrentDate(prev => prev.subtract(1, "month"));
+  const goToNextMonth = () => setCurrentDate(prev => prev.add(1, "month"));
 
-  // 3) Check if date is booked for the currently selected property
   const isBooked = (dateObj) => {
-    if (!dateObj) return false; // filler day from prev month
-    const formatted = dateObj.format("YYYY-MM-DD");
-    return bookedDates.includes(formatted);
+    if (!dateObj) return false;
+    return bookedDates.includes(dateObj.format("YYYY-MM-DD"));
+  };
+
+  // When a day cell is clicked (if not booked), open modal.
+  const handleDayClick = (dayObj) => {
+    if (!dayObj) return;
+    if (isBooked(dayObj)) return;
+    setSelectedDate(dayObj);
+    setBlockModalOpen(true);
+  };
+
+  const closeBlockModal = () => {
+    setBlockModalOpen(false);
+    setSelectedDate(null);
+  };
+
+  // Confirm toggling: call handler with selectedProperty and date string.
+  const confirmToggle = () => {
+    if (selectedDate) {
+      onToggleBlockedDate(selectedProperty, selectedDate.format("YYYY-MM-DD"));
+      console.log("Toggled date:", selectedDate.format("YYYY-MM-DD"), "for property", selectedProperty);
+    }
+    closeBlockModal();
   };
 
   return (
-    <section
-      id="calendar"
-      className="bg-white rounded-xl shadow-sm border border-gray-100 p-5"
-    >
+    <section className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center">
-          <FaCalendarAlt className="text-indigo-600 mr-2" />
-          <h2 className="text-lg font-semibold text-gray-800">
-            Availability Calendar
-          </h2>
-        </div>
-        <div className="flex items-center space-x-2">
-          <button
-            onClick={goToPrevMonth}
-            className="px-3 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200"
-          >
-            Prev
-          </button>
-          <p className="font-semibold text-gray-700">
-            {currentDate.format("MMMM YYYY")}
-          </p>
-          <button
-            onClick={goToNextMonth}
-            className="px-3 py-1 bg-gray-100 text-gray-600 rounded hover:bg-gray-200"
-          >
-            Next
-          </button>
+      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 px-6 py-5 border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-white rounded-xl shadow-sm">
+              <FaCalendarAlt className="text-indigo-600 text-xl" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Availability Calendar</h2>
+              <p className="text-sm text-gray-600">View and manage property bookings</p>
+            </div>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button onClick={goToPrevMonth} className="p-2.5 hover:bg-white rounded-lg transition-colors">
+              <FaChevronLeft className="w-5 h-5 text-gray-600" />
+            </button>
+            <p className="font-semibold text-gray-700 min-w-[140px] text-center">
+              {currentDate.format("MMMM YYYY")}
+            </p>
+            <button onClick={goToNextMonth} className="p-2.5 hover:bg-white rounded-lg transition-colors">
+              <FaChevronRight className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Property Filter */}
-      <div className="mb-4">
-        <label className="block text-sm text-gray-700 font-medium mb-1">
-          Select Property:
-        </label>
-        <select
-          value={selectedProperty}
-          onChange={(e) => setSelectedProperty(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1"
-        >
-          <option value="101">Beach House</option>
-          <option value="102">City Apartment</option>
-          <option value="103">Mountain Cabin</option>
-        </select>
-      </div>
-
-      {/* Weekday Row */}
-      <div className="grid grid-cols-7 gap-1 mb-2 text-center text-sm font-semibold text-gray-600">
-        {WEEKDAYS.map((day) => (
-          <div key={day}>{day}</div>
-        ))}
+      <div className="px-6 py-4 border-b border-gray-200">
+        <div className="max-w-xs">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Select Property
+          </label>
+          <div className="relative">
+            <select
+              value={selectedProperty}
+              onChange={(e) => setSelectedProperty(e.target.value)}
+              className="w-full pl-4 pr-8 py-2.5 rounded-lg border border-gray-200 bg-white text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              {properties && properties.length > 0 ? (
+                properties.map((prop) => (
+                  <option key={prop.id} value={prop.id}>
+                    {prop.title}
+                  </option>
+                ))
+              ) : (
+                <option value="">No properties available</option>
+              )}
+            </select>
+            <FaHome className="absolute right-3 top-3.5 text-gray-400" />
+          </div>
+        </div>
       </div>
 
       {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-1">
-        {calendarMatrix.map((dayObj, idx) => {
-          if (!dayObj) {
-            return <div key={idx} className="h-16 bg-gray-50" />;
-          }
-          const dayNum = dayObj.date();
-          const formatted = dayObj.format("YYYY-MM-DD");
-          const booked = isBooked(dayObj);
-
-          return (
-            <div
-              key={formatted}
-              className={`border h-16 flex flex-col items-center justify-center rounded
-                ${
-                  booked
-                    ? "bg-red-100 border-red-300"
-                    : "bg-green-50 border-green-200"
-                }`}
-            >
-              <span className="font-semibold text-gray-700">{dayNum}</span>
-              {booked ? (
-                <span className="text-xs text-red-600">Booked</span>
-              ) : (
-                <span className="text-xs text-green-600">Available</span>
-              )}
+      <div className="p-6">
+        {/* Weekdays */}
+        <div className="grid grid-cols-7 gap-2 mb-3">
+          {WEEKDAYS.map((day) => (
+            <div key={day} className="text-center text-sm font-medium text-gray-500 py-2">
+              {day}
             </div>
-          );
-        })}
+          ))}
+        </div>
+
+        {/* Days */}
+        <div className="grid grid-cols-7 gap-2">
+          {calendarMatrix.map((dayObj, idx) => {
+            if (!dayObj) {
+              return <div key={idx} className="h-16 bg-gray-50 rounded-lg" />;
+            }
+            const dateStr = dayObj.format("YYYY-MM-DD");
+            const booked = isBooked(dayObj);
+            const blocked = propertyBlocked.includes(dateStr);
+            const isToday = dayjs().isSame(dayObj, "day");
+
+            let bgColor, borderColor, textColor, label;
+            if (booked) {
+              bgColor = "bg-rose-50";
+              borderColor = "border-rose-200 hover:border-rose-300";
+              textColor = "text-rose-700";
+              label = "Booked";
+            } else if (blocked) {
+              bgColor = "bg-gray-400";
+              borderColor = "border-gray-400";
+              textColor = "text-white";
+              label = "Blocked";
+            } else {
+              bgColor = "bg-emerald-50";
+              borderColor = "border-emerald-200 hover:border-emerald-300";
+              textColor = "text-emerald-700";
+              label = "Available";
+            }
+
+            return (
+              <div
+                key={dateStr}
+                className={`group h-16 flex flex-col items-center justify-center rounded-lg border transition-all ${bgColor} ${borderColor} ${isToday ? "ring-2 ring-indigo-300" : ""} cursor-pointer`}
+                onClick={() => !booked && handleDayClick(dayObj)}
+              >
+                <span className={`text-sm font-medium ${textColor}`}>
+                  {dayObj.date()}
+                </span>
+                <span className="text-xs mt-0.5">{label}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Legend */}
+        <div className="mt-6 flex items-center space-x-4 text-sm">
+          <div className="flex items-center space-x-1.5">
+            <div className="w-3 h-3 bg-emerald-100 rounded-sm" />
+            <span className="text-gray-600">Available</span>
+          </div>
+          <div className="flex items-center space-x-1.5">
+            <div className="w-3 h-3 bg-rose-100 rounded-sm" />
+            <span className="text-gray-600">Booked</span>
+          </div>
+          <div className="flex items-center space-x-1.5">
+            <div className="w-3 h-3 bg-gray-400 rounded-sm" />
+            <span className="text-gray-600">Blocked</span>
+          </div>
+          <div className="flex items-center space-x-1.5">
+            <div className="w-3 h-3 ring-2 ring-indigo-300 rounded-sm" />
+            <span className="text-gray-600">Today</span>
+          </div>
+        </div>
       </div>
 
-      {/* Info */}
-      <div className="mt-4 text-gray-600 text-sm">
-        <p>
-          This monthly view updates based on the{" "}
-          <strong>selected property</strong>. Booked dates are marked in{" "}
-          <span className="text-red-600 font-semibold">red</span>, while
-          available dates are marked in{" "}
-          <span className="text-green-600 font-semibold">green</span>.
-        </p>
-      </div>
+      {/* Block/Unblock Modal Form */}
+      {blockModalOpen && selectedDate && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-lg">
+            <h3 className="text-lg font-bold mb-4">
+              {propertyBlocked.includes(selectedDate.format("YYYY-MM-DD"))
+                ? "Unblock Date"
+                : "Block Date"}
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              {selectedDate.format("dddd, MMMM D, YYYY")}
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={closeBlockModal}
+                className="px-4 py-2 rounded bg-gray-200 text-gray-800 hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmToggle}
+                className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+              >
+                {propertyBlocked.includes(selectedDate.format("YYYY-MM-DD"))
+                  ? "Unblock"
+                  : "Block"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

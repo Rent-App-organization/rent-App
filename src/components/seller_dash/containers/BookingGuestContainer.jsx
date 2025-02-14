@@ -1,71 +1,73 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import BookingDetailsModal from "../modals/BookingDetailsModal";
 import GuestDetailsModal from "../modals/GuestDetailsModal";
 
-// Example data
-const bookingData = {
-  id: 123,
-  guestName: "Alice Anderson",
-  status: "Pending",
-  checkInDate: "2025-05-10",
-  checkOutDate: "2025-05-14",
-  paymentStatus: "Not Paid",
-  totalAmount: "$950",
-  specialRequests: "Need extra blankets",
-};
-
-export default function BookingGuestContainer() {
+// Replace this with your real data-fetching logic (e.g., using Firebase onValue)
+export default function BookingGuestContainer({ bookingId }) {
+  const [bookingData, setBookingData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [showBookingModal, setShowBookingModal] = useState(true);
   const [showGuestModal, setShowGuestModal] = useState(false);
 
-  // When user clicks arrow in booking => animate exit, then open guest
-  const handleGoToGuest = () => {
-    // We'll handle the exit inside the booking modal's code
-    // so from here, we just call a function inside Booking that triggers the exit
-  };
+  useEffect(() => {
+    // Simulated data fetch: Replace with your actual Firebase subscription
+    setTimeout(() => {
+      // For example, your real data from Firebase might be:
+      const fetchedData = {
+        id: bookingId,
+        fullName: "takrezzzzzzzzzffffffffffffffffff",
+        guestEmail: "alice@example.com",
+        phoneNumber: "0798837302",
+        status: "approved",
+        startDate: "2025-02-14",
+        endDate: "2025-02-27",
+        numGuests: "10",
+        // Add any additional fields as needed
+      };
+      setBookingData(fetchedData);
+      setLoading(false);
+    }, 1000);
+  }, [bookingId]);
 
-  // Called by booking modal when exit finishes
   const openGuestModal = () => {
-    // Hide booking
     setShowBookingModal(false);
-    // Show guest
     setShowGuestModal(true);
   };
 
-  // If user closes everything
   const closeAll = () => {
-    setShowGuestModal(false);
     setShowBookingModal(false);
+    setShowGuestModal(false);
   };
 
-  // If user closes just the guest
   const closeGuest = () => {
     setShowGuestModal(false);
-    // Optionally re-show booking if you want
-    // Or keep everything closed
   };
+
+  if (loading) {
+    return <div>Loading booking details...</div>;
+  }
+
+  if (!bookingData) return <div>No booking found.</div>;
 
   return (
     <>
-      {/* If showBookingModal, render it */}
-      {showBookingModal && (
+      {showBookingModal && bookingData && (
         <BookingDetailsModal
           booking={bookingData}
-          onExitComplete={openGuestModal} // after exit animation, open guest
-          onClose={closeAll}              // close everything
+          onExitComplete={openGuestModal}
+          onClose={closeAll}
         />
       )}
-
-      {/* If showGuestModal, render it */}
-      {showGuestModal && (
+      {showGuestModal && bookingData && (
         <GuestDetailsModal
-          guest={{ 
-            name: bookingData.guestName, 
-            email: "test@example.com", 
-            phone: "+1 555 555 1234" 
+          guest={{
+            name: bookingData.fullName,
+            email: bookingData.guestEmail,
+            phone: bookingData.phoneNumber,
+            avatar: bookingData.guestAvatar,
           }}
-          onClose={closeGuest}    // close just guest
-          onCloseAll={closeAll}   // close everything
+          onClose={closeGuest}
+          onCloseAll={closeAll}
         />
       )}
     </>
