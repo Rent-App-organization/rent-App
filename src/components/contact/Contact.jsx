@@ -48,13 +48,13 @@ const Contact = () => {
   ];
 
   const theme = {
-    background: "#E5EAF5",
+    background: "#EDEADE",
     fontFamily: "Arial",
-    headerBgColor: "#6C7A9C",
+    headerBgColor: "#A09681",
     headerFontColor: "#fff",
-    botBubbleColor: "#6C7A9C",
+    botBubbleColor: "#A09681",
     botFontColor: "#fff",
-    userBubbleColor: "#4A5A7A",
+    userBubbleColor: "#8C826D",
     userFontColor: "#fff",
   };
 
@@ -65,16 +65,15 @@ const Contact = () => {
     <div
       className="bg-blue-50"
       style={{
-        backgroundColor: "#E5EAF5",
+        backgroundColor: "#EDEADE",
         backgroundSize: "cover",
         backgroundPosition: "center"
       }}
     >
       <Navbar />
-
       <div className="min-h-screen flex flex-col items-center py-20 px-5">
         <div className="w-full max-w-4xl space-y-8">
-          <div className="bg-[#6C7A9C] p-6 rounded-lg shadow-md text-white">
+          <div className="bg-[#A49B89] p-6 rounded-lg shadow-md text-[#F7F5EE]">
             <h2 className="text-2xl font-bold text-center mb-4">📩 Contact Us</h2>
             <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
               <label className="text-lg font-semibold">Name</label>
@@ -84,10 +83,9 @@ const Contact = () => {
                 placeholder="✍️ Your Name"
                 value={formData.name}
                 onChange={handleChange}
-                className="p-3 border-2 border-[#4A5A7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#394863] text-black"
+                className="p-3 border-2 border-[#8C8370] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6B6655] text-black"
                 required
               />
-
               <label className="text-lg font-semibold">Email</label>
               <input
                 type="email"
@@ -95,7 +93,7 @@ const Contact = () => {
                 placeholder="📧 Your Email"
                 value={formData.email}
                 onChange={handleChange}
-                className="p-3 border-2 border-[#4A5A7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#394863] text-black"
+                className="p-3 border-2 border-[#9C9278] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7D6F5E] text-black"
                 required
               />
 
@@ -106,13 +104,14 @@ const Contact = () => {
                 placeholder="📝 Write your message..."
                 value={formData.message}
                 onChange={handleChange}
-                className="p-3 border-2 border-[#4A5A7A] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#394863] text-black"
+                className="p-3 border-2 border-[#9C9278] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7D6F5E] text-black"
                 required
               ></textarea>
 
-              <button className="bg-[#4A5A7A] text-white py-3 rounded-lg text-lg font-bold hover:bg-[#394863] transition duration-300">
+              <button className="bg-[#8B7D6B] text-white py-3 rounded-lg text-lg font-bold hover:bg-[#6F6556] transition duration-300">
                 🚀 Send Message
               </button>
+
             </form>
           </div>
         </div>
@@ -125,19 +124,24 @@ const Contact = () => {
         </div>
       </div>
 
-      <div onClick={toggleChat} className="fixed bottom-10 right-10 bg-[#5A6988] p-4 rounded-full shadow-lg cursor-pointer transition duration-300 hover:bg-[#394863]">
-        <span className="text-white text-xl">🤖</span>
-      </div>
+      <div onClick={toggleChat} className="fixed bottom-10 right-10 bg-[#A59B87] p-4 rounded-full shadow-lg cursor-pointer transition duration-300 hover:bg-[#7C7363]">
+  <span className="text-[#F5F1E8] text-xl">🤖</span>
+</div>
 
       {isChatOpen && (
-        <div className="fixed bottom-20 right-10 w-80 h-96 bg-white rounded-lg shadow-lg z-50">
-          <ThemeProvider theme={theme}>
-            <div className="flex justify-end p-2">
-              <button onClick={closeChat} className="text-black text-2xl font-bold p-2">X</button>
-            </div>
-            <ChatBot steps={steps} handleEnd={closeChat} />
-          </ThemeProvider>
-        </div>
+        <div className="fixed bottom-20 right-10 w-80 h-96 bg-[#EAE6DA] rounded-lg shadow-md z-50">
+  <ThemeProvider theme={theme}>
+    <div className="flex justify-end p-2">
+      <button 
+        onClick={closeChat} 
+        className="text-[#5C5346] text-2xl font-bold p-2 transition duration-300 hover:text-[#3F3A32]"
+      >
+        X
+      </button>
+    </div>
+    <ChatBot steps={steps} handleEnd={closeChat} />
+  </ThemeProvider>
+</div>
       )}
       <Footer />
     </div>
