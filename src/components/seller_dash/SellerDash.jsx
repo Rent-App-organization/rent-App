@@ -158,25 +158,31 @@ export default function SellerDash() {
       <div className="flex-1 flex flex-col">
         <NavBar />
         <main className="p-4 sm:p-6 overflow-y-auto space-y-6">
-          <PropertiesSection
+          
+        <AnalyticsSection properties={properties} bookings={bookings} />
+        <PropertiesSection
             properties={properties}
             onAddProperty={() => {}}
             onEditProperty={() => {}}
             onRemoveProperty={handleRemoveProperty}
             onOpenDepositModal={openDepositModal}
           />
-          <CalendarSection
-            bookings={bookings}
-            properties={properties}
-            onToggleBlockedDate={handleToggleBlockedDate}
-          />
-          <BookingsSection
+        <BookingsSection
             bookings={bookings}
             properties={properties}
             onBookingAction={handleBookingAction}
           />
-          <AnalyticsSection properties={properties} bookings={bookings} />
+
+<CalendarSection
+            bookings={bookings}
+            properties={properties}
+            onToggleBlockedDate={handleToggleBlockedDate}
+          />
+          
           <ReviewsSection reviews={reviews} properties={properties} />
+
+          
+
         </main>
       </div>
 

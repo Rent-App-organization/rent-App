@@ -72,7 +72,7 @@ export default function RejectedPropertyCard({
           </span>
         </div>
         <p className="text-sm text-red-600 mb-4">
-          {property.rejectedReason || "No specific reason provided"}
+          {property.depositResponse || "No specific reason provided"}
         </p>
         <button
           onClick={() => onOpenDepositModal(property)}

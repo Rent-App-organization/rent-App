@@ -23,10 +23,10 @@ export default function ReviewsSection({ reviews = [], properties = [] }) {
   return (
     <section className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 px-6 py-5 border-b border-gray-200">
+      <div className="bg-gradient-to-r from-[#ECEBDE] to-[#D7D3BF] px-6 py-5 border-b border-gray-200">
         <div className="flex items-center space-x-4">
           <div className="p-3 bg-white rounded-xl shadow-sm">
-            <FaRegCommentDots className="text-indigo-600 text-xl" />
+            <FaRegCommentDots className="text-xl" />
           </div>
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Property Reviews</h2>
@@ -84,7 +84,7 @@ export default function ReviewsSection({ reviews = [], properties = [] }) {
               >
                 {/* Review Header */}
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-semibold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">
+                  <span className="text-sm font-semibold text-[#543A14]">
                     {getPropertyName(review.productId)}
                   </span>
                   <div className="flex items-center space-x-1">
