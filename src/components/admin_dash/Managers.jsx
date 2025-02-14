@@ -85,13 +85,12 @@ export default function Managers() {
                 {/* Status */}
                 <td className="px-4 py-3 sm:px-6 sm:py-4">
                   <span
-                    className={`inline-flex items-center px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium ${
-                      manager.status === "Approved"
-                        ? "bg-green-100 text-green-700"
-                        : manager.status === "Rejected"
+                    className={`inline-flex items-center px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium ${manager.status === "Approved"
+                      ? "bg-green-100 text-green-700"
+                      : manager.status === "Rejected"
                         ? "bg-red-100 text-red-700"
                         : "bg-amber-100 text-amber-700"
-                    }`}
+                      }`}
                   >
                     {manager.status}
                   </span>

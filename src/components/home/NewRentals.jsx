@@ -37,9 +37,9 @@ export default function NewRentals() {
     <div className="max-w-7xl mx-auto px-4 py-12 ">
       <div className="text-center mt-12 mb-7">
         <h1 className="text-4xl font-bold text-center text-black p-4 rounded-lg">
-        New Rental Villas
+          New Rental Villas
         </h1>
-        
+
       </div>
 
 
@@ -75,10 +75,10 @@ export default function NewRentals() {
 
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-1">
-                    <DollarSign className="w-5 h-5 text-black" />
                     <span className="text-xl font-bold text-black">
-                      {rental.price}
+                      {rental.price} JD
                     </span>
+
                     <span className="text-gray-500">/month</span>
                   </div>
 

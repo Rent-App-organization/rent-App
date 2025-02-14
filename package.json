@@ -22,6 +22,7 @@
     "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "firebase": "^11.3.1",
+    "framer-motion": "^12.4.2",
     "lucide-react": "^0.475.0",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",
@@ -35,6 +36,7 @@
     "react-router-dom": "^7.1.5",
     "react-simple-chatbot": "^0.6.1",
     "react-toastify": "^11.0.3",
+    "sweetalert2": "^11.16.1",
     "tailwindcss": "^4.0.6",
     "zxcvbn": "^4.4.2"
   },

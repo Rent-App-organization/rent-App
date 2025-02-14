@@ -13,7 +13,8 @@ import {
   Support,
   About,
   Contact,
-  PageNotFound
+  PageNotFound,
+  SellerObjection
 } from "./components";
 function App() {
 
@@ -70,6 +71,10 @@ function App() {
     {
       path: '/Contact',
       element: <Contact />,
+    },
+    {
+      path: '/SellerObjection',
+      element: <SellerObjection />,
     },
   ])
 
