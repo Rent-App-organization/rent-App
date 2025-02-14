@@ -8,8 +8,8 @@ function Categories() {
   const categories = [
     {
       title: 'Amazing pools',
-      description: 'Discover properties with stunning swimming pools.',
-      image: 'https://a0.muscache.com/im/pictures/miso/Hosting-1021823526546123768/original/1de1f36c-3de0-4cec-89f3-79baf38fa242.jpeg?im_w=1200&im_format=avif'
+      description: 'Discover properties with stunning pools.',
+      image: 'https://a0.muscache.com/im/pictures/4cd03a3a-ad0a-4039-822e-a00017f01c87.jpg?im_w=1200&im_format=avif'
     },
     {
       title: 'Castles',
@@ -17,9 +17,9 @@ function Categories() {
       image: 'https://a0.muscache.com/im/pictures/miso/Hosting-47086741/original/89035847-1f96-4269-af1e-120a19e1cfd7.jpeg?im_w=1200&im_format=avif'
     },
     {
-      title: 'Island',
-      description: 'Escape to beautiful island destinations.',
-      image: 'https://a0.muscache.com/im/pictures/miso/Hosting-1176955419486517899/original/83a47318-f3f6-4579-94d5-71523787ff11.jpeg?im_w=1200&im_format=avif'
+      title: 'Earth Homes',
+      description: 'friendly homes for connection with nature.',
+      image: 'https://a0.muscache.com/im/pictures/miso/Hosting-823789884284098040/original/22f2a67f-b0f3-47cf-9a34-44c2424b8776.jpeg?im_w=1200&im_format=avif'
     },
     {
       title: 'Historical Homes',
@@ -67,7 +67,7 @@ function Categories() {
             </div>
 
             {/* Button */}
-            <Link to="/rental" className="absolute bottom-4 right-4 bg-white text-black px-4 py-2 rounded-md text-sm font-medium opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+            <Link to="/rentals" className="absolute bottom-4 right-4 bg-white text-black px-4 py-2 rounded-md text-sm font-medium opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
               View collection
             </Link>
           </div>

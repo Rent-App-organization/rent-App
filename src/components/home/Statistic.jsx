@@ -4,15 +4,15 @@ function Statistic() {
   return (
     <>
      {/* Statistic section */}
-     <section className="py-10 bg-white sm:py-16 lg:py-24">
-        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+     <section className="mt-5 py-10 bg-white sm:py-16 lg:py-5">
+        <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-10">
           <div className="text-center">
             <h4 className="text-2xl font-bold text-center text-black rounded-lg">
               Numbers Tell The Hard Works We’ve Done In Last 6 Years
             </h4>
           </div>
 
-          <div className="grid grid-cols-1 gap-6 px-6 mt-8 sm:px-0 lg:mt-16 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-12">
+          <div className="grid grid-cols-1 gap-6 px-6 mt-8 sm:px-0 lg:mt-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-12">
             <div className="overflow-hidden bg-white border border-gray-200 rounded-lg">
               <div className="px-4 py-6">
                 <div className="flex items-start">

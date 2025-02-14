@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 
 export default function Footer() {
   return (
@@ -8,9 +10,9 @@ export default function Footer() {
           
           {/* Logo & Description */}
           <div className="col-span-2 md:col-span-3 lg:col-span-2 lg:pr-8">
-          <h3 className="font-light text-3xl">Horizon Villas</h3>
+          <h3 className="font-bold text-3xl">Horizon Villas</h3>
             <p className="text-base leading-relaxed text-[black] mt-7">
-              Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat duis enim velit mollit.
+            Discover luxurious villas with breathtaking views and world-class amenities. Explore stunning properties, take virtual tours, and book your dream getaway with ease.
             </p>
             
             {/* Social Icons */}
@@ -34,23 +36,23 @@ export default function Footer() {
 
           {/* Company Links */}
           <div>
-            <p className="text-sm font-semibold tracking-widest text-[black] uppercase">Company</p>
+            <p className="text-sm font-bold tracking-widest text-[black] uppercase ">Useful Links</p>
             <ul className="mt-6 space-y-4">
-              <li><a href="#" className="text-base text-black transition-all duration-200 ">About</a></li>
-              <li><a href="#" className="text-base text-black transition-all duration-200 ">Features</a></li>
-              <li><a href="#" className="text-base text-black transition-all duration-200 ">Works</a></li>
-              <li><a href="#" className="text-base text-black transition-all duration-200 ">Career</a></li>
+              <li><Link to ="/" className="text-base text-black transition-all duration-200 ">Home</Link></li>
+              <li><Link to ="/rentals" className="text-base text-black transition-all duration-200 ">Rentals</Link></li>
+              <li><Link to ="/contact" className="text-base text-black transition-all duration-200 ">Support</Link></li>
+              <li><Link to ="/about" className="text-base text-black transition-all duration-200 ">About us</Link></li>
             </ul>
           </div>
 
           {/* Help Links */}
           <div>
-            <p className="text-sm font-semibold tracking-widest text-[black] uppercase">Help</p>
+            <p className="text-sm font-bold tracking-widest text-[black] uppercase">Help</p>
             <ul className="mt-6 space-y-4">
-              <li><a href="#" className="text-base text-black transition-all duration-200 ">Customer Support</a></li>
-              <li><a href="#" className="text-base text-black transition-all duration-200 ">Delivery Details</a></li>
-              <li><a href="#" className="text-base text-black transition-all duration-200 ">Terms & Conditions</a></li>
-              <li><a href="#" className="text-base text-black transition-all duration-200 ">Privacy Policy</a></li>
+              <li><Link to ="/" className="text-base text-black transition-all duration-200 ">Customer Support</Link></li>
+              <li><Link to ="/" className="text-base text-black transition-all duration-200 ">Delivery Details</Link></li>
+              <li><Link to ="/" className="text-base text-black transition-all duration-200 ">Terms & Conditions</Link></li>
+              <li><Link to ="/" className="text-base text-black transition-all duration-200 ">Privacy Policy</Link></li>
             </ul>
           </div>
 
@@ -72,9 +74,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Footer Bottom */}
-        <hr className="mt-16 mb-10 border-gray-200" />
-        <p className="text-sm text-center text-[black]">© Copyright 2021, All Rights Reserved by Postcraft</p>
       </div>
     </section>
     </div>
