@@ -118,15 +118,15 @@ export default function PropertyModal({ property, onClose, onSave }) {
         >
           <button
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 text-gray-500 hover:text-indigo-600 transition-all hover:scale-110"
+            className="absolute top-5 right-5 p-2 text-gray-500 hover:text-[#543A14] transition-all hover:scale-110"
             title="Close"
           >
             <FaTimes className="w-7 h-7" />
           </button>
 
           <div className="flex items-center gap-4 mb-8">
-            <div className="p-3 bg-indigo-100 rounded-xl">
-              <FaEdit className="text-indigo-600 w-8 h-8" />
+            <div className="p-3 bg-[#ECEBDE] rounded-xl">
+              <FaEdit className="text-[#A59D84] w-8 h-8" />
             </div>
             <h3 className="text-3xl font-bold text-gray-800">
               {property ? "Edit Property" : "New Property Listing"}
@@ -137,7 +137,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
             {/* Title Field */}
             <div className="space-y-2">
               <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
-                <FaHome className="text-indigo-600 w-5 h-5 flex-shrink-0" />
+                <FaHome className="text-[#A59D84] w-5 h-5 flex-shrink-0" />
                 <span>
                   Property Title <span className="text-red-500">*</span>
                 </span>
@@ -145,7 +145,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
               <input
                 type="text"
                 required
-                className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all placeholder-gray-400"
+                className="w-full px-4 py-3.5 border-2 border-[#ECEBDE] rounded-xl focus:ring-4 focus:ring-[#A59D84] focus:border-[#A59D84] transition-all placeholder-gray-400"
                 placeholder="Luxury Beach Villa..."
                 value={formData.title}
                 onChange={(e) =>
@@ -157,14 +157,14 @@ export default function PropertyModal({ property, onClose, onSave }) {
             {/* Location Field */}
             <div className="space-y-2">
               <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
-                <FaMapMarkerAlt className="text-indigo-600 w-5 h-5 flex-shrink-0" />
+                <FaMapMarkerAlt className="text-[#A59D84] w-5 h-5 flex-shrink-0" />
                 <span>
                   Location <span className="text-red-500">*</span>
                 </span>
               </label>
               <select
                 required
-                className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
+                className="w-full px-4 py-3.5 border-2 border-[#ECEBDE] rounded-xl focus:ring-4 focus:ring-[#A59D84] focus:border-[#A59D84] transition-all"
                 value={formData.location}
                 onChange={(e) =>
                   setFormData({ ...formData, location: e.target.value })
@@ -182,12 +182,11 @@ export default function PropertyModal({ property, onClose, onSave }) {
             {/* Neighborhood Field */}
             <div className="space-y-2">
               <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
-                <span className="opacity-0">Icon</span>
                 Neighborhood
               </label>
               <input
                 type="text"
-                className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all placeholder-gray-400"
+                className="w-full px-4 py-3.5 border-2 border-[#ECEBDE] rounded-xl focus:ring-4 focus:ring-[#A59D84] focus:border-[#A59D84] transition-all placeholder-gray-400"
                 placeholder="Enter neighborhood"
                 value={formData.neighborhood}
                 onChange={(e) =>
@@ -205,7 +204,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
                 <input
                   type="number"
                   min="0"
-                  className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
+                  className="w-full px-4 py-3.5 border-2 border-[#ECEBDE] rounded-xl focus:ring-4 focus:ring-[#A59D84] focus:border-[#A59D84] transition-all"
                   placeholder="Number of bedrooms"
                   value={formData.bedrooms}
                   onChange={(e) =>
@@ -220,7 +219,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
                 <input
                   type="number"
                   min="0"
-                  className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
+                  className="w-full px-4 py-3.5 border-2 border-[#ECEBDE] rounded-xl focus:ring-4 focus:ring-[#A59D84] focus:border-[#A59D84] transition-all"
                   placeholder="Enter area in sq ft"
                   value={formData.area}
                   onChange={(e) =>
@@ -238,7 +237,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
                 </label>
                 <select
                   required
-                  className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
+                  className="w-full px-4 py-3.5 border-2 border-[#ECEBDE] rounded-xl focus:ring-4 focus:ring-[#A59D84] focus:border-[#A59D84] transition-all"
                   value={formData.category}
                   onChange={(e) =>
                     setFormData({ ...formData, category: e.target.value })
@@ -257,7 +256,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
                 </label>
                 <input
                   type="date"
-                  className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
+                  className="w-full px-4 py-3.5 border-2 border-[#ECEBDE] rounded-xl focus:ring-4 focus:ring-[#A59D84] focus:border-[#A59D84] transition-all"
                   value={formData.date}
                   onChange={(e) =>
                     setFormData({ ...formData, date: e.target.value })
@@ -269,13 +268,13 @@ export default function PropertyModal({ property, onClose, onSave }) {
             {/* Price Field */}
             <div className="space-y-2">
               <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
-                <FaDollarSign className="text-indigo-600 w-5 h-5 flex-shrink-0" />
+                <FaDollarSign className="text-[#A59D84] w-5 h-5 flex-shrink-0" />
                 Price per Night
               </label>
               <input
                 type="number"
                 min="0"
-                className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all"
+                className="w-full px-4 py-3.5 border-2 border-[#ECEBDE] rounded-xl focus:ring-4 focus:ring-[#A59D84] focus:border-[#A59D84] transition-all"
                 placeholder="Enter price (optional)"
                 value={formData.price}
                 onChange={(e) =>
@@ -287,11 +286,11 @@ export default function PropertyModal({ property, onClose, onSave }) {
             {/* Description Field */}
             <div className="space-y-2">
               <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
-                <FaEdit className="text-indigo-600 w-5 h-5 flex-shrink-0" />
+                <FaEdit className="text-[#A59D84] w-5 h-5 flex-shrink-0" />
                 Description
               </label>
               <textarea
-                className="w-full px-4 py-3.5 border-2 border-indigo-100 rounded-xl focus:ring-4 focus:ring-indigo-200 focus:border-indigo-500 transition-all placeholder-gray-400"
+                className="w-full px-4 py-3.5 border-2 border-[#ECEBDE] rounded-xl focus:ring-4 focus:ring-[#A59D84] focus:border-[#A59D84] transition-all placeholder-gray-400"
                 rows={4}
                 placeholder="Describe your property's best features..."
                 value={formData.description}
@@ -305,13 +304,13 @@ export default function PropertyModal({ property, onClose, onSave }) {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <label className="flex items-center gap-3 text-sm font-semibold text-gray-700">
-                  <FaImage className="text-indigo-600 w-5 h-5" />
+                  <FaImage className="text-[#A59D84] w-5 h-5" />
                   Property Images
                 </label>
                 <button
                   type="button"
                   onClick={handleAddImage}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-600 transition-all shadow-md hover:shadow-lg"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#A59D84]  text-white rounded-xl hover:bg-[#543A14]  text-white rounded-xl transition-all shadow-md hover:shadow-lg"
                 >
                   <FaImage className="w-4 h-4" />
                   Add Image
@@ -338,7 +337,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
                   </div>
                 ))}
                 {formData.photos.length === 0 && (
-                  <div className="col-span-full py-8 text-center text-gray-400 flex flex-col items-center">
+                  <div className="col-span-full py-8 text-center text-[#A59D84] flex flex-col items-center">
                     <FaImage className="w-12 h-12 mb-3 opacity-50" />
                     <span>No images added yet</span>
                   </div>
@@ -357,7 +356,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
               </button>
               <button
                 type="submit"
-                className="px-8 py-3.5 bg-gradient-to-r from-indigo-600 to-indigo-500 text-white rounded-xl hover:from-indigo-700 hover:to-indigo-600 transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                className="px-8 py-3.5 bg-[#A59D84]  text-white rounded-xl hover:bg-[#543A14] transition-all shadow-md hover:shadow-lg flex items-center gap-2"
               >
                 <FaEdit className="w-5 h-5" />
                 {property ? "Update Property" : "Create Listing"}

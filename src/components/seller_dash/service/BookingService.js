@@ -9,6 +9,7 @@ export function subscribeToBookings(callback) {
   const bookingsRef = ref(database, "formData");
   return onValue(bookingsRef, (snapshot) => {
     const data = snapshot.val();
+    
     let allBookings = [];
     if (data) {
       allBookings = Object.keys(data).map((key) => ({

@@ -1,11 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaArrowRight, FaCalendarAlt, FaUser, FaUserFriends } from "react-icons/fa";
+import { ref, onValue } from "firebase/database";
+import { database } from "../../../fireBaseConfig";
 
-const defaultBookingIcon = "https://via.placeholder.com/100?text=Booking";
+const defaultBookingIcon = "https://random.imagecdn.app/500/150";
 
 export default function BookingDetailsModal({ booking, onClose, onForward }) {
   const [isExiting, setIsExiting] = useState(false);
+  const [propertyPhoto, setPropertyPhoto] = useState(null);
   const modalRef = useRef(null);
+
+  // Fetch property photo from Firebase using booking.productId.
+  useEffect(() => {
+    if (booking && booking.productId) {
+      const productRef = ref(database, `products/${booking.productId}`);
+      const unsubscribe = onValue(productRef, (snapshot) => {
+        const productData = snapshot.val();
+        if (productData && productData.photos && productData.photos.length > 0) {
+          setPropertyPhoto(productData.photos[0]);
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [booking]);
 
   useEffect(() => {
     if (modalRef.current) {
@@ -60,7 +77,7 @@ export default function BookingDetailsModal({ booking, onClose, onForward }) {
         <div className="flex flex-col items-center mt-4">
           <div className="relative group">
             <img
-              src={booking.image || defaultBookingIcon}
+              src={booking.image || propertyPhoto || defaultBookingIcon}
               alt="Booking"
               className="w-32 h-32 rounded-2xl border-4 border-white shadow-xl object-cover transition-transform duration-300 group-hover:rotate-2"
             />
@@ -70,7 +87,7 @@ export default function BookingDetailsModal({ booking, onClose, onForward }) {
             </div>
           </div>
           <h2 className="mt-6 text-2xl font-bold text-[#A59D84]">
-            Booking #{booking.id}
+            Booking <small>#{booking.id}</small>
           </h2>
         </div>
 

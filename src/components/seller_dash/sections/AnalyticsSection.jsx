@@ -3,9 +3,7 @@ import { FaChartPie, FaCheckCircle, FaClock, FaTimesCircle, FaBuilding } from "r
 import { FiTrendingUp } from "react-icons/fi";
 
 export default function AnalyticsSection({ properties, bookings }) {
-  if (!properties || properties.length === 0 || !bookings) {
-    return <div className="p-6 text-[#4A4947]">Loading analytics...</div>;
-  }
+  
 
   // Normalize status strings.
   const normalizeStatus = (status) => (status ? status.trim().toLowerCase() : "");
