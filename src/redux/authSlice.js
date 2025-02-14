@@ -207,7 +207,7 @@ const authSlice = createSlice({
     },
     updateUserRole: (state, action) => {
       if (state.user) {
-        state.user.role = action.payload; // تحديث الدور في Redux
+        state.user.role = action.payload; 
       }
     }
   }
@@ -310,7 +310,6 @@ export const logoutUser = () => async (dispatch) => {
   }
 };
 
-// ** دالة تحويل المستخدم إلى مؤجر (مالك عقار) **
 export const becomeOwner = (ownerData) => async (dispatch, getState) => {
   try {
     dispatch(setLoading(true));
@@ -324,7 +323,7 @@ export const becomeOwner = (ownerData) => async (dispatch, getState) => {
 
     await update(userRef, {
       role: "owner",
-      ownerDetails: ownerData // حفظ بيانات إضافية عن المالك
+      ownerDetails: ownerData 
     });
 
     dispatch(updateUserRole("owner"));
