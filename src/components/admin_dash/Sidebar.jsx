@@ -21,22 +21,22 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar }) {
       className={`
         fixed sm:sticky top-0 left-0
         w-64 h-screen
-        bg-gradient-to-b from-indigo-600 to-indigo-700
+        bg-[#D7D3BF]
         text-white shadow-xl z-40
         transform transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? "translate-x-0" : "-translate-x-full sm:translate-x-0"}
       `}
     >
       {/* Header / Logo */}
-      <div className="p-4 sm:p-6 border-b border-indigo-500 flex items-center justify-between">
+      <div className="p-4 sm:p-6 border-b border-[#D7D3BF] flex items-center justify-between">
         <div className="flex items-center space-x-2">
-          <div className="p-2 bg-white rounded-lg">
-            <FaHome className="text-indigo-600 text-xl" />
+          <div className="p-2 bg-black rounded-lg">
+            <FaHome className="text-[#A59D84] text-xl" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight">RentalAdmin</h1>
+          <h1 className="text-xl font-bold tracking-tight text-black">RentalAdmin</h1>
         </div>
         <button
-          className="text-white hover:text-indigo-100 text-2xl sm:hidden focus:outline-none"
+          className="text-black hover:text-[#A59D84] text-2xl sm:hidden focus:outline-none"
           onClick={toggleSidebar}
           aria-label="Close sidebar"
         >
@@ -51,12 +51,12 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar }) {
             <li key={item.label}>
               <a
                 href="#!"
-                className="flex items-center px-3 py-2 sm:px-4 sm:py-3 rounded-lg hover:bg-indigo-500/20 transition-all duration-300 group"
+                className="flex items-center px-3 py-2 sm:px-4 sm:py-3 rounded-lg text-black hover:bg-[#A59D84] transition-all duration-300 group"
               >
-                <span className="text-lg text-indigo-200 group-hover:text-white mr-3">
+                <span className="text-lg text-[#A59D84] group-hover:text-black mr-3">
                   {item.icon}
                 </span>
-                <span className="text-sm sm:text-base font-medium group-hover:text-white">
+                <span className="text-sm sm:text-base font-medium group-hover:text-black">
                   {item.label}
                 </span>
               </a>
@@ -66,8 +66,8 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar }) {
       </nav>
 
       {/* Footer */}
-      <div className="mt-auto p-4 border-t border-indigo-500 text-center">
-        <p className="text-xs sm:text-sm text-indigo-200">
+      <div className="mt-auto p-4 border-t border-[#A59D84] text-center">
+        <p className="text-xs sm:text-sm text-black">
           © 2025 Rental Inc.
         </p>
       </div>

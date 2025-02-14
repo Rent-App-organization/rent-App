@@ -3,148 +3,149 @@ import { auth, googleProvider, database } from '../fireBaseConfig'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signInWithPopup
+  signInWithPopup,
+  signOut
 } from 'firebase/auth'
-import { ref, set, get } from 'firebase/database'
+import { ref, set, get, update } from 'firebase/database'
 import toast from 'react-hot-toast'
 
-// Initial state for the auth slice
-const initialState = {
-  user: null,
-  loading: false,
-  error: null
-}
+export const fetchUserData = () => {
+  return async (dispatch) => {
+    dispatch(setLoading(true));
+    try {
+      const user = auth.currentUser;
+      if (!user) throw new Error('No user logged in');
 
-// Create the slice with standard reducers
+      const userRef = ref(database, `users/${user.uid}`);
+      const snapshot = await get(userRef);
+
+      if (!snapshot.exists()) throw new Error('User not found');
+
+      dispatch(setUser({ uid: user.uid, ...snapshot.val() }));
+    } catch (error) {
+      dispatch(setError(error.message));
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+};
+
 const authSlice = createSlice({
   name: 'auth',
-  initialState,
+  initialState: {
+    user: null,
+    loading: false,
+    error: null,
+  },
   reducers: {
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
     setLoading: (state, action) => {
-      state.loading = action.payload
+      state.loading = action.payload;
     },
     setError: (state, action) => {
-      state.error = action.payload
-    },
-    setUser: (state, action) => {
-      state.user = action.payload
+      state.error = action.payload;
     },
     logout: (state) => {
-      state.user = null
+      state.user = null;
     }
   }
-})
+});
 
-// Export synchronous actions
-export const { setLoading, setError, setUser, logout } = authSlice.actions
+export const { setUser, setLoading, setError, logout } = authSlice.actions;
+export default authSlice.reducer;
 
-// Export the reducer
-export default authSlice.reducer
+export const registerUser = (formData) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const { email, password, fullName, phone, profileImage } = formData;
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
 
-// Async action creator for registering a user
-export const registerUser = (formData) => {
-  return async (dispatch) => {
-    try {
-      dispatch(setLoading(true))
-      const { email, password, fullName, phone, profileImage } = formData
+    await set(ref(database, `users/${user.uid}`), {
+      fullName,
+      email,
+      phone,
+      profileImage: profileImage || '',
+      role: "user"
+    });
 
-      // Create a new user with email and password
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-      const user = userCredential.user
-
-      // Save user data in the Realtime Database
-      await set(ref(database, `users/${user.uid}`), {
-        fullName,
-        email,
-        phone,
-        profileImage: profileImage || '',
-        role: "user"
-      })
-
-      toast.success('Account created successfully!')
-      dispatch(setUser({
-        uid: user.uid,
-        fullName,
-        email,
-        phone,
-        profileImage: profileImage || ''
-      }))
-    } catch (error) {
-      toast.error(`Error: ${error.message}`)
-      dispatch(setError(error.message))
-    } finally {
-      dispatch(setLoading(false))
-    }
+    toast.success('Account created successfully!');
+    dispatch(setUser({ uid: user.uid, fullName, email, phone, profileImage: profileImage || '' }));
+  } catch (error) {
+    dispatch(setError(error.message));
+    toast.error(`Error: ${error.message}`);
+  } finally {
+    dispatch(setLoading(false));
   }
-}
+};
 
-// Async action creator for logging in a user
-export const loginUser = (formData) => {
-  return async (dispatch) => {
-    try {
-      dispatch(setLoading(true))
-      const { email, password } = formData
-
-      // Sign in with email and password
-      const userCredential = await signInWithEmailAndPassword(auth, email, password)
-      const user = userCredential.user
-
-      // Retrieve user data from the database
-      const userRef = ref(database, `users/${user.uid}`)
-      const userSnapshot = await get(userRef)
-
-      if (userSnapshot.exists()) {
-        toast.success(`Welcome back, ${userSnapshot.val().fullName}!`)
-        dispatch(setUser({
-          uid: user.uid,
-          ...userSnapshot.val()
-        }))
-      } else {
-        toast.error('User not found!')
-        dispatch(setError('User not found'))
-      }
-    } catch (error) {
-      toast.error(`Login Error: ${error.message}`)
-      dispatch(setError(error.message))
-    } finally {
-      dispatch(setLoading(false))
-    }
+export const loginUser = (formData) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const { email, password } = formData;
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    dispatch(fetchUserData());
+    toast.success('Welcome back!');
+  } catch (error) {
+    dispatch(setError(error.message));
+    toast.error(`Login Error: ${error.message}`);
+  } finally {
+    dispatch(setLoading(false));
   }
-}
+};
 
-// Async action creator for Google Sign-In
-export const googleSignIn = () => {
-  return async (dispatch) => {
-    try {
-      dispatch(setLoading(true))
-      const result = await signInWithPopup(auth, googleProvider)
-      const user = result.user
+export const updateUserData = (formData) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const userRef = ref(database, `users/${auth.currentUser.uid}`);
+    await update(userRef, formData);
+    dispatch(setUser({ uid: auth.currentUser.uid, ...formData }));
+    toast.success("Profile updated successfully!");
+  } catch (error) {
+    dispatch(setError(error.message));
+    toast.error("Error updating profile: " + error.message);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
 
-      // Retrieve user data from the database; if not exists, create it
-      const userRef = ref(database, `users/${user.uid}`)
-      const userSnapshot = await get(userRef)
+export const googleSignIn = () => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const result = await signInWithPopup(auth, googleProvider);
+    const user = result.user;
 
-      if (!userSnapshot.exists()) {
-        await set(userRef, {
-          fullName: user.displayName,
-          email: user.email,
-          profileImage: user.photoURL || '',
-          role: "user"
-        })
-      }
+    const userRef = ref(database, `users/${user.uid}`);
+    const userSnapshot = await get(userRef);
 
-      toast.success(`Welcome, ${user.displayName}!`)
-      dispatch(setUser({
-        uid: user.uid,
+    if (!userSnapshot.exists()) {
+      await set(userRef, {
         fullName: user.displayName,
         email: user.email,
-        profileImage: user.photoURL || ''
-      }))
-    } catch (error) {
-      toast.error(`Google Sign-in Error: ${error.message}`)
-      dispatch(setError(error.message))
-    } finally {
-      dispatch(setLoading(false))
+        profileImage: user.photoURL || '',
+        role: "user"
+      });
     }
+
+    dispatch(fetchUserData());
+    toast.success(`Welcome, ${user.displayName}!`);
+  } catch (error) {
+    dispatch(setError(error.message));
+    toast.error(`Google Sign-in Error: ${error.message}`);
+  } finally {
+    dispatch(setLoading(false));
   }
-}
+};
+
+export const logoutUser = () => async (dispatch) => {
+  try {
+    await signOut(auth);
+    dispatch(setUser(null));
+    toast.success("Logged out successfully!");
+  } catch (error) {
+    dispatch(setError(error.message));
+    toast.error("Logout failed: " + error.message);
+  }
+};

@@ -1,15 +1,40 @@
-// components/StatisticsSection.jsx
-import React from "react";
+import { useEffect, useState } from "react";
 import { FaUserTie, FaCheckCircle, FaTimesCircle, FaBuilding } from "react-icons/fa";
+import axios from "axios";
 
-export default function StatisticsSection({ managers, listings }) {
-  // Simple calculations based on props (you can replace these with real logic)
+export default function StatisticsSection() {
+  const [managers, setManagers] = useState([]);
+  const [listings, setListings] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // managers data
+        const managersResponse = await axios.get(
+          `https://rental-website-bb300-default-rtdb.firebaseio.com/users.json`
+        );
+        setManagers(managersResponse.data ? Object.values(managersResponse.data) : []);
+
+        // products data
+        const listingsResponse = await axios.get(
+          `https://rental-website-bb300-default-rtdb.firebaseio.com/products.json`
+        );
+        setListings(listingsResponse.data ? Object.values(listingsResponse.data) : []); 
+      } catch (error) {
+        console.error("Error fetching data from Firebase:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // Statistics  
   const totalManagers = managers.length;
-  const approvedManagers = managers.filter((m) => m.status === "Approved").length;
-  const rejectedManagers = managers.filter((m) => m.status === "Rejected").length;
+  const approvedManagers = Array.isArray(managers) ? managers.filter((m) => m.status === "Approved").length : 0;
+  const rejectedManagers = Array.isArray(managers) ? managers.filter((m) => m.status === "Rejected").length : 0;
   const totalListings = listings.length;
-  const approvedListings = listings.filter((l) => l.status === "Approved").length;
-  const rejectedListings = listings.filter((l) => l.status === "Rejected").length;
+  const approvedListings = Array.isArray(listings) ? listings.filter((l) => l.status === "Approved").length : 0;
+  const rejectedListings = Array.isArray(listings) ? listings.filter((l) => l.status === "Rejected").length : 0;
 
   return (
     <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 sm:p-6">
@@ -26,9 +51,7 @@ export default function StatisticsSection({ managers, listings }) {
           </div>
           <div>
             <p className="text-sm text-gray-600">Total Managers</p>
-            <p className="text-xl font-bold text-indigo-800">
-              {totalManagers}
-            </p>
+            <p className="text-xl font-bold text-indigo-800">{totalManagers}</p>
           </div>
         </div>
 
@@ -39,9 +62,7 @@ export default function StatisticsSection({ managers, listings }) {
           </div>
           <div>
             <p className="text-sm text-gray-600">Approved Managers</p>
-            <p className="text-xl font-bold text-green-800">
-              {approvedManagers}
-            </p>
+            <p className="text-xl font-bold text-green-800">{approvedManagers}</p>
           </div>
         </div>
 
@@ -52,9 +73,7 @@ export default function StatisticsSection({ managers, listings }) {
           </div>
           <div>
             <p className="text-sm text-gray-600">Rejected Managers</p>
-            <p className="text-xl font-bold text-red-800">
-              {rejectedManagers}
-            </p>
+            <p className="text-xl font-bold text-red-800">{rejectedManagers}</p>
           </div>
         </div>
       </div>
@@ -67,9 +86,7 @@ export default function StatisticsSection({ managers, listings }) {
           </div>
           <div>
             <p className="text-sm text-gray-600">Total Listings</p>
-            <p className="text-xl font-bold text-indigo-800">
-              {totalListings}
-            </p>
+            <p className="text-xl font-bold text-indigo-800">{totalListings}</p>
           </div>
         </div>
 
@@ -80,9 +97,7 @@ export default function StatisticsSection({ managers, listings }) {
           </div>
           <div>
             <p className="text-sm text-gray-600">Approved Listings</p>
-            <p className="text-xl font-bold text-green-800">
-              {approvedListings}
-            </p>
+            <p className="text-xl font-bold text-green-800">{approvedListings}</p>
           </div>
         </div>
 
@@ -93,9 +108,7 @@ export default function StatisticsSection({ managers, listings }) {
           </div>
           <div>
             <p className="text-sm text-gray-600">Rejected Listings</p>
-            <p className="text-xl font-bold text-red-800">
-              {rejectedListings}
-            </p>
+            <p className="text-xl font-bold text-red-800">{rejectedListings}</p>
           </div>
         </div>
       </div>
