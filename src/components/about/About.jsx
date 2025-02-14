@@ -9,7 +9,7 @@ function About() {
     <>
       <Navbar />
       <Hero />
-      <Process />
+      {/* <Process /> */}
       <OurTeam />
       <Footer />
     </>
