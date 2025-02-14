@@ -72,58 +72,56 @@ const Contact = () => {
     >
       <Navbar />
       <div className="min-h-screen flex flex-col items-center py-20 px-5">
-        <div className="w-full max-w-4xl space-y-8">
-          <div className="bg-[#A49B89] p-6 rounded-lg shadow-md text-[#F7F5EE]">
-            <h2 className="text-2xl font-bold text-center mb-4">📩 Contact Us</h2>
-            <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
-              <label className="text-lg font-semibold">Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="✍️ Your Name"
-                value={formData.name}
-                onChange={handleChange}
-                className="p-3 border-2 border-[#8C8370] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#6B6655] text-black"
-                required
-              />
-              <label className="text-lg font-semibold">Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="📧 Your Email"
-                value={formData.email}
-                onChange={handleChange}
-                className="p-3 border-2 border-[#9C9278] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7D6F5E] text-black"
-                required
-              />
+  <div className="w-full max-w-4xl space-y-8">
+    <div className="bg-[#C2B8A3] p-6 rounded-lg shadow-md text-[#FAF9F6]">
+      <h2 className="text-2xl font-bold text-center mb-4">📩 Contact Us</h2>
+      <form className="flex flex-col space-y-4" onSubmit={handleSubmit}>
+        <label className="text-lg font-semibold">Name</label>
+        <input
+          type="text"
+          name="name"
+          placeholder="✍️ Your Name"
+          value={formData.name}
+          onChange={handleChange}
+          className="p-3 border-2 border-[#B3A890] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A49B89] text-black"
+          required
+        />
+        <label className="text-lg font-semibold">Email</label>
+        <input
+          type="email"
+          name="email"
+          placeholder="📧 Your Email"
+          value={formData.email}
+          onChange={handleChange}
+          className="p-3 border-2 border-[#B3A890] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A49B89] text-black"
+          required
+        />
 
-              <label className="text-lg font-semibold">Message</label>
-              <textarea
-                name="message"
-                rows="4"
-                placeholder="📝 Write your message..."
-                value={formData.message}
-                onChange={handleChange}
-                className="p-3 border-2 border-[#9C9278] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7D6F5E] text-black"
-                required
-              ></textarea>
+        <label className="text-lg font-semibold">Message</label>
+        <textarea
+          name="message"
+          rows="4"
+          placeholder="📝 Write your message..."
+          value={formData.message}
+          onChange={handleChange}
+          className="p-3 border-2 border-[#B3A890] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#A49B89] text-black"
+          required
+        ></textarea>
 
-              <button className="bg-[#8B7D6B] text-white py-3 rounded-lg text-lg font-bold hover:bg-[#6F6556] transition duration-300">
-                🚀 Send Message
-              </button>
+        <button className="bg-[#B3A890] text-white py-3 rounded-lg text-lg font-bold hover:bg-[#9C9278] transition duration-300">
+           Send Message
+        </button>
+      </form>
+    </div>
+  </div>
 
-            </form>
-          </div>
-        </div>
-
-        <div className="w-full mt-8">
-          <iframe
-            src="https://maps.google.com/maps?q=your-location&output=embed"
-            className="w-full h-96 rounded-lg shadow-lg"
-          ></iframe>
-        </div>
-      </div>
-
+  <div className="w-full mt-8">
+    <iframe
+      src="https://maps.google.com/maps?q=your-location&output=embed"
+      className="w-full h-96 rounded-lg shadow-lg"
+    ></iframe>
+  </div>
+</div>
       <div onClick={toggleChat} className="fixed bottom-10 right-10 bg-[#A59B87] p-4 rounded-full shadow-lg cursor-pointer transition duration-300 hover:bg-[#7C7363]">
   <span className="text-[#F5F1E8] text-xl">🤖</span>
 </div>

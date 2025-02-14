@@ -1,24 +1,25 @@
 import { useEffect, useState } from "react";
-import axios from "axios"; // استيراد axios
-import { ref, update } from "firebase/database"; // استيراد update و ref فقط من firebase/database
-import { database } from "../../firebaseConfig"; // استيراد database من ملف firebaseConfig
+import axios from "axios";
+import { ref, update } from "firebase/database";
+import { database } from "../../firebaseConfig";
 
 export default function Listings() {
   const [listings, setListings] = useState([]);
+  const [sellersData, setSellersData] = useState({}); // تخزين بيانات المستخدمين
 
-  // ✅ جلب البيانات باستخدام axios من Firebase
+  // ✅ جلب بيانات المنتجات
   useEffect(() => {
     const fetchListings = async () => {
-      try {        // تحديد رابط API الخاص ب Firebase Realtime Database
+      try {
         const response = await axios.get(
-          `https://rental-website-bb300-default-rtdb.firebaseio.com/products.json`
+          `https://testrent-b52c9-default-rtdb.firebaseio.com/products.json`
         );
-        
+
         if (response.data) {
           const data = response.data;
-          const pendingListings = Object.keys(data) // تحويل البيانات إلى مصفوفة
+          const pendingListings = Object.keys(data)
             .map(id => ({ id, ...data[id] }))
-            .filter(listing => listing.status === "pending"); // جلب المنتجات التي حالتها "Pending"
+            .filter(listing => listing.status === "pending");
           setListings(pendingListings);
         } else {
           console.log("No data available");
@@ -27,17 +28,35 @@ export default function Listings() {
         console.error("Error fetching data from Firebase:", error);
         console.error(error.response ? error.response.data : error.message);
       }
-      
     };
 
     fetchListings();
+  }, []);
+
+  // ✅ جلب بيانات المستخدمين من Firebase
+  useEffect(() => {
+    const fetchSellers = async () => {
+      try {
+        const response = await axios.get(
+          `https://rental-website-bb300-default-rtdb.firebaseio.com/users.json`
+        );
+
+        if (response.data) {
+          setSellersData(response.data); // تخزين بيانات المستخدمين
+        }
+      } catch (error) {
+        console.error("Error fetching sellers data:", error);
+      }
+    };
+
+    fetchSellers();
   }, []);
 
   // ✅ تحديث الحالة في Realtime Database عند الموافقة أو الرفض
   const handleListingAction = async (id, newStatus) => {
     const listingRef = ref(database, `products/${id}`);
     await update(listingRef, { status: newStatus });
-  
+
     // Re-fetch the listings after the update
     fetchListings();
   };
@@ -66,15 +85,12 @@ export default function Listings() {
           <tbody className="divide-y divide-gray-100">
             {listings.length > 0 ? (
               listings.map(listing => (
-                <tr
-                  key={listing.id}
-                  className="hover:bg-gray-50 transition-colors"
-                >
+                <tr key={listing.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-4 py-3 sm:px-6 sm:py-4 font-medium text-gray-800 text-sm sm:text-base">
                     {listing.title}
                   </td>
                   <td className="px-4 py-3 sm:px-6 sm:py-4 text-gray-600 text-sm">
-                  {listing.seller} 
+                    {sellersData[listing.seller]?.fullName || "Unknown"}
                   </td>
                   <td className="px-4 py-3 sm:px-6 sm:py-4">
                     <span
