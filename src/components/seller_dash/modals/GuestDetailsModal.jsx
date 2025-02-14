@@ -43,14 +43,14 @@ export default function GuestDetailsModal({ guest, onCloseAll, onBack }) {
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={handleBack}
-            className="p-2 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-all"
+            className="p-2 text-[#A59D84] hover:text-[#543A14] hover:bg-[#ECEBDE] rounded-lg transition-all"
             title="Back to Booking"
           >
             <FaArrowLeft size={20} />
           </button>
           <button
             onClick={handleCloseAll}
-            className="p-2 text-gray-400 hover:text-red-600 hover:bg-gray-50 rounded-lg transition-all"
+            className="p-2 text-gray-400 hover:text-[#A59D84] hover:bg-gray-50 rounded-lg transition-all"
             title="Close"
           >
             <FaTimes size={20} />
@@ -65,9 +65,9 @@ export default function GuestDetailsModal({ guest, onCloseAll, onBack }) {
               alt="Guest Avatar"
               className="w-28 h-28 rounded-full border-4 border-white shadow-xl object-cover transition-transform duration-300 group-hover:rotate-2 group-hover:scale-105"
             />
-            <div className="absolute inset-0 rounded-full border-2 border-emerald-100/50 pointer-events-none" />
+            <div className="absolute inset-0 rounded-full border-2 border-[#ECEBDE] pointer-events-none" />
           </div>
-          <h2 className="mt-4 text-2xl font-bold text-gray-900 bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+          <h2 className="mt-4 text-2xl font-bold text-[#A59D84]">
             {name || "Guest Profile"}
           </h2>
           <p className="text-sm text-gray-500 mt-1">Registered Guest</p>
@@ -77,17 +77,17 @@ export default function GuestDetailsModal({ guest, onCloseAll, onBack }) {
         <div className="mt-6 space-y-4">
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
             <div className="p-3 bg-white rounded-lg shadow-sm">
-              <FaEnvelope className="text-emerald-600" size={18} />
+              <FaEnvelope className="text-[#A59D84]" size={18} />
             </div>
             <div>
               <p className="text-sm text-gray-500">Email Address</p>
-              <p className="font-medium text-gray-900 break-all">{email || "Not provided"}</p>
+              <p className="font-medium  break-all">{email || "Not provided"}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
             <div className="p-3 bg-white rounded-lg shadow-sm">
-              <FaPhone className="text-emerald-600" size={18} />
+              <FaPhone className="text-[#A59D84]" size={18} />
             </div>
             <div>
               <p className="text-sm text-gray-500">Phone Number</p>

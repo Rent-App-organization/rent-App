@@ -78,11 +78,11 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
   return (
     <section className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative">
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-50 to-blue-50 px-6 py-5 border-b border-gray-200">
+      <div className="bg-gradient-to-r from-[#ECEBDE] to-[#D7D3BF] px-6 py-5 border-b border-gray-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="p-3 bg-white rounded-xl shadow-sm">
-              <FaCalendarAlt className="text-indigo-600 text-xl" />
+              <FaCalendarAlt className="text text-xl" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Availability Calendar</h2>
@@ -159,10 +159,10 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
               textColor = "text-rose-700";
               label = "Booked";
             } else if (blocked) {
-              bgColor = "bg-gray-400";
-              borderColor = "border-gray-400";
+              bgColor = "bg-gray-300";
+              borderColor = "border-gray-300";
               textColor = "text-white";
-              label = "Blocked";
+              label = "Not Available";
             } else {
               bgColor = "bg-emerald-50";
               borderColor = "border-emerald-200 hover:border-emerald-300";
@@ -227,7 +227,7 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
               </button>
               <button
                 onClick={confirmToggle}
-                className="px-4 py-2 rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                className="px-4 py-2 rounded bg-[#A59D84] text-white hover:bg-indigo-700"
               >
                 {propertyBlocked.includes(selectedDate.format("YYYY-MM-DD"))
                   ? "Unblock"

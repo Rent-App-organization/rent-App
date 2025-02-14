@@ -73,7 +73,7 @@ export default function PropertiesSection({
           )}
           
           {/* Status Badge */}
-          <div className="absolute top-4 right-4 flex items-center space-x-1.5 bg-white/90 px-3 py-1.5 rounded-full shadow-sm">
+          <div className="absolute top-4 right-4 flex items-center space-x-1.5 bg-[#ECEBDE] px-3 py-1.5 rounded-full shadow-sm">
             <StatusIcon className={`w-4 h-4 ${
               property.status.toLowerCase() === 'approved' ? 'text-emerald-500' :
               property.status.toLowerCase() === 'pending' ? 'text-amber-500' :
@@ -94,10 +94,10 @@ export default function PropertiesSection({
             {property.location || "No location specified"}
           </p>
           <div className="flex items-center justify-between">
-            <span className="rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700">
+            <span className="rounded-lg bg-[#ECEBDE] px-3 py-1.5 text-sm font-medium text-black">
               {property.price ? `$${Number(property.price).toLocaleString()}` : "N/A"}
             </span>
-            <span className="flex items-center space-x-1 text-sm text-gray-500">
+            <span className="flex items-center space-x-1 text-sm text-[#A59D84]">
               <FaRegImage className="h-4 w-4" />
               <span>{hasPhotos ? property.photos.length : 0}</span>
             </span>
@@ -139,7 +139,7 @@ export default function PropertiesSection({
       <div className="mb-12">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <h3 className={`text-2xl font-bold ${text}`}>{title}</h3>
+            <h3 className={`text-xl font-bold ${text}`}>{title}</h3>
             <span className={`rounded-full px-3 py-1 text-sm font-medium ${bg} ${text}`}>
               {count} property{count !== 1 && 's'}
             </span>
@@ -176,14 +176,14 @@ export default function PropertiesSection({
       {/* Header */}
       <div className="mb-8 flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
         <div className="space-y-1">
-          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-            Property Portfolio
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl bg-gradient-to-r from-[#A59D84] to-[#A59D84] bg-clip-text text-transparent">
+            Your Properties
           </h1>
           <p className="text-lg text-gray-600">Manage and track your property listings</p>
         </div>
         <button
           onClick={() => openModal()}
-          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-600 px-6 py-3.5 text-sm font-medium text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#A59D84] to-[#A59D84] px-6 py-3.5 text-sm font-medium text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
         >
           <FaPlus className="h-4 w-4" />
           Add New Property
