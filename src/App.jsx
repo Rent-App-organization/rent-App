@@ -10,7 +10,6 @@ import {
   Checkout,
   Wishlist,
   UserProfile,
-  Support,
   About,
   Contact,
   PageNotFound,
@@ -61,15 +60,11 @@ function App() {
       element: <UserProfile />,
     },
     {
-      path: '/Support',
-      element: <Support />,
-    },
-    {
       path: '/About',
       element: <About />,
     },
     {
-      path: '/Contact',
+      path: '/support',
       element: <Contact />,
     },
     {

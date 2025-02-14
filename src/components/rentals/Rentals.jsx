@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Navbar from "../navBar/NavBar";
+import Footer from '../footer/Footer';
 import { FaSearch } from "react-icons/fa";
 import axios from "axios";
 import { setRentals, setLoading, setError } from "../../redux/rentalSlice";
@@ -92,7 +93,7 @@ const Rentals = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button className="bg-red-500 text-white px-6 py-2 rounded-full flex items-center">
+              <button className="bg-[#A59D84] text-white px-6 py-2 rounded-full flex items-center">
                 <FaSearch className="mr-2" />
                 Search
               </button>
@@ -160,14 +161,15 @@ const Rentals = () => {
         </div>
 
         {/* Call to Action */}
-        <div className="bg-blue-500 text-white py-12 text-center">
+        <div className="text-[#000] py-12 text-center">
           <h2 className="text-3xl font-bold">Become a Host</h2>
           <p className="mt-2 text-lg">Earn money by renting out your villa to travelers.</p>
-          <button className="mt-4 bg-white text-blue-500 px-6 py-3 rounded-lg font-bold hover:bg-gray-200 transition">
+          <button className="cursor-pointer text-white mt-4 bg-[#A59D84] px-6 py-3 rounded-lg font-bold transition">
             List Your Villa
           </button>
         </div>
       </div>
+      <Footer />
     </>
   );
 };
