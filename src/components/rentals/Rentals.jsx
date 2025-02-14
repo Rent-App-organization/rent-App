@@ -24,7 +24,7 @@ const Rentals = () => {
 
       try {
         const response = await axios.get(
-          "https://rental-website-bb300-default-rtdb.firebaseio.com/products.json"
+          "https://testrent-b52c9-default-rtdb.firebaseio.com//products.json"
         );
         const data = response.data;
 
