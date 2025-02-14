@@ -1,13 +1,14 @@
-import { createSlice } from '@reduxjs/toolkit'
-import { auth, googleProvider, database } from '../fireBaseConfig'
+
+import { createSlice } from '@reduxjs/toolkit';
+import { auth, googleProvider, database } from '../fireBaseConfig';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut
-} from 'firebase/auth'
-import { ref, set, get, update } from 'firebase/database'
-import toast from 'react-hot-toast'
+} from 'firebase/auth';
+import { ref, set, get, update } from 'firebase/database';
+import toast from 'react-hot-toast';
 
 export const fetchUserData = () => {
   return async (dispatch) => {
@@ -49,11 +50,16 @@ const authSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
+    },
+    updateUserRole: (state, action) => {
+      if (state.user) {
+        state.user.role = action.payload; 
+      }
     }
   }
 });
 
-export const { setUser, setLoading, setError, logout } = authSlice.actions;
+export const { setUser, setLoading, setError, logout, updateUserRole } = authSlice.actions;
 export default authSlice.reducer;
 
 export const registerUser = (formData) => async (dispatch) => {
@@ -72,7 +78,7 @@ export const registerUser = (formData) => async (dispatch) => {
     });
 
     toast.success('Account created successfully!');
-    dispatch(setUser({ uid: user.uid, fullName, email, phone, profileImage: profileImage || '' }));
+    dispatch(setUser({ uid: user.uid, fullName, email, phone, profileImage: profileImage || '', role: "user" }));
   } catch (error) {
     dispatch(setError(error.message));
     toast.error(`Error: ${error.message}`);
@@ -147,5 +153,32 @@ export const logoutUser = () => async (dispatch) => {
   } catch (error) {
     dispatch(setError(error.message));
     toast.error("Logout failed: " + error.message);
+  }
+};
+
+export const becomeOwner = (ownerData) => async (dispatch, getState) => {
+  try {
+    dispatch(setLoading(true));
+    const user = getState().auth.user;
+
+    if (!user) {
+      throw new Error("No authenticated user found.");
+    }
+
+    const userRef = ref(database, `users/${user.uid}`);
+
+    await update(userRef, {
+      role: "owner",
+      ownerDetails: ownerData 
+    });
+
+    dispatch(updateUserRole("owner"));
+
+    toast.success("You are now a Property Owner!");
+  } catch (error) {
+    dispatch(setError(error.message));
+    toast.error("Failed to become an owner: " + error.message);
+  } finally {
+    dispatch(setLoading(false));
   }
 };
