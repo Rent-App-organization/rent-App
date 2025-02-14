@@ -44,7 +44,7 @@ export function subscribeToPropertiesBySeller(sellerId, callback) {
     if (data) {
       const fetchedProperties = Object.keys(data)
         .map((key) => ({ id: key, ...data[key] }))
-        .filter((prop) => !prop.deleted); // Exclude soft-deleted properties
+        .filter((prop) => !prop.deleted);
       callback(fetchedProperties);
     } else {
       callback([]);
@@ -54,10 +54,16 @@ export function subscribeToPropertiesBySeller(sellerId, callback) {
 
 /**
  * Sends a deposit request by updating the product record with the deposit request message.
- * This simply adds (or updates) the `depositRequest` field in the product.
  */
 export async function sendDepositRequest(propertyId, message) {
   return update(ref(database, `products/${propertyId}`), {
     depositRequest: message,
   });
+}
+
+/**
+ * Updates the blockedDates field for a property.
+ */
+export async function updateBlockedDates(propertyId, blockedDates) {
+  return update(ref(database, `products/${propertyId}`), { blockedDates });
 }

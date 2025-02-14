@@ -1,27 +1,22 @@
 import React, { useState } from "react";
-import BookingDetailsModal from "./BookingDetailsModal";
-import GuestDetailsModal from "./GuestDetailsModal";
+import BookingDetailsModal from "../modals/BookingDetailsModal";
+import GuestDetailsModal from "../modals/GuestDetailsModal";
 
 export default function BookingWizard({ booking, onCloseAll }) {
-  const [step, setStep] = useState("booking"); // or "guest"
+  const [step, setStep] = useState("booking");
 
   if (!booking) return null;
 
-  // Move from booking => guest
-  const handleBookingForward = () => {
-    setStep("guest");
-  };
+  const handleBookingForward = () => setStep("guest");
+  const handleGuestBack = () => setStep("booking");
+  const handleCloseAll = () => onCloseAll?.();
 
-  // Move from guest => booking
-  const handleGuestBack = () => {
-    setStep("booking");
-  };
-
-  // Close entire wizard
-  const handleCloseAll = () => {
-    // optionally setStep("") here if you want
-    // but the parent will unmount us anyway
-    onCloseAll?.();
+  // Build guest data using booking fields
+  const guestData = {
+    name: booking.fullName || "",
+    email: booking.guestEmail || "", // If available
+    phone: booking.phoneNumber || "",
+    avatar: booking.guestAvatar || "",
   };
 
   return (
@@ -35,11 +30,7 @@ export default function BookingWizard({ booking, onCloseAll }) {
       )}
       {step === "guest" && (
         <GuestDetailsModal
-          guest={{
-            name: booking.guestName || "Unknown",
-            email: "test@example.com",
-            phone: "+1 555 555 1234",
-          }}
+          guest={guestData}
           onCloseAll={handleCloseAll}
           onBack={handleGuestBack}
         />
