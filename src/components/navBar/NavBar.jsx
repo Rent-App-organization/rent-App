@@ -9,41 +9,25 @@ const Navbar = () => {
           {/* Logo Section */}
           <Link to="/" className="relative group flex items-center space-x-3">
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-2">
-              <span className="text-white font-bold text-xl">TM</span>
+              <span className="text-white font-bold text-xl">HV</span>
             </div>
             <span className="text-gray-800 font-semibold text-lg">
-              Task Manager
-              <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-300"></div>
+              Horizon Villas
+              <div className="absolute bottom-0 left-0 w-0 h-0.5"></div>
             </span>
           </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             <div className="flex space-x-6">
-              {["about", "contact"].map((item) => (
-                <Link
-                  key={item}
-                  to={`/${item}`}
-                  className="relative group py-2 text-gray-600"
-                >
-                  <span className="relative z-10">
-                    {item.charAt(0).toUpperCase() + item.slice(1)}
-                  </span>
-                  <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-300"></div>
-                </Link>
-              ))}
-            </div>
-
-            <div className="flex space-x-6">
               {[
                 "Rentals",
-                "PropertyDetails",
-                "Checkout",
                 "Wishlist",
-                "UserProfile",
                 "Support",
                 "AdminDash",
                 "SellerDash",
+                "about",
+                "contact"
               ].map((item) => (
                 <Link
                   key={item}
