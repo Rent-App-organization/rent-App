@@ -36,12 +36,12 @@ export default function Listings() {
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[600px] sm:min-w-0">
-          <thead className="bg-indigo-50">
+          <thead className="bg-[#ECEBDE]">
             <tr>
               {["Title", "Owner", "Status", "Actions"].map(header => (
                 <th
                   key={header}
-                  className="px-4 py-3 sm:px-6 sm:py-4 text-xs sm:text-sm font-semibold text-indigo-600 text-left"
+                  className="px-4 py-3 sm:px-6 sm:py-4 text-xs sm:text-sm font-semibold text-black text-left"
                 >
                   {header}
                 </th>
