@@ -1,21 +1,36 @@
-import React, { useState } from "react";
-import { FaPlus, FaTrash, FaEdit } from "react-icons/fa";
+import React, { useState, useMemo } from "react";
+import { 
+  FaPlus, 
+  FaRegImage, 
+  FaRegFolderOpen, 
+  FaEdit, 
+  FaTrash,
+  FaCheckCircle,
+  FaClock,
+  FaTimesCircle
+} from "react-icons/fa";
 import PropertyModal from "../modals/PropertyModal";
-
-// A fallback image if the property has no images
-const PLACEHOLDER_IMAGE =
-  "https://via.placeholder.com/400x250.png?text=No+Image";
+import RejectedPropertyCard from "../containers/RejectedPropertyCard";
 
 export default function PropertiesSection({
   properties,
   onAddProperty,
   onEditProperty,
   onRemoveProperty,
+  onOpenDepositModal,
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProperty, setEditingProperty] = useState(null);
 
-  // Open modal for new or existing property
+  const [approvedProperties, pendingProperties, rejectedProperties] = useMemo(
+    () => [
+      properties.filter((p) => p.status?.toLowerCase() === "approved"),
+      properties.filter((p) => p.status?.toLowerCase() === "pending"),
+      properties.filter((p) => p.status?.toLowerCase() === "rejected"),
+    ],
+    [properties]
+  );
+
   const openModal = (prop = null) => {
     setEditingProperty(prop);
     setIsModalOpen(true);
@@ -26,106 +41,181 @@ export default function PropertiesSection({
     setEditingProperty(null);
   };
 
-  // Handle save (new or existing)
   const handleSave = (formData) => {
-    if (editingProperty) {
-      onEditProperty(editingProperty.id, formData);
-    } else {
-      onAddProperty(formData);
-    }
+    editingProperty ? onEditProperty(editingProperty.id, formData) : onAddProperty(formData);
     closeModal();
   };
 
+  const statusIcons = {
+    approved: FaCheckCircle,
+    pending: FaClock,
+    rejected: FaTimesCircle
+  };
+
+  const UniquePropertyCard = ({ property }) => {
+    const hasPhotos = property.photos?.length > 0;
+    const StatusIcon = statusIcons[property.status.toLowerCase()] || FaCheckCircle;
+    
+    return (
+      <div className="group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl">
+        {/* Image Section */}
+        <div className="relative h-64 w-full bg-gradient-to-br from-gray-50 to-gray-100">
+          {hasPhotos ? (
+            <img
+              src={property.photos[0]}
+              alt={property.title}
+              className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <FaRegImage className="h-16 w-16 text-gray-300/80" />
+            </div>
+          )}
+          
+          {/* Status Badge */}
+          <div className="absolute top-4 right-4 flex items-center space-x-1.5 bg-white/90 px-3 py-1.5 rounded-full shadow-sm">
+            <StatusIcon className={`w-4 h-4 ${
+              property.status.toLowerCase() === 'approved' ? 'text-emerald-500' :
+              property.status.toLowerCase() === 'pending' ? 'text-amber-500' :
+              'text-rose-500'
+            }`} />
+            <span className="text-sm font-medium text-gray-700 capitalize">
+              {property.status}
+            </span>
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="bg-white p-4">
+          <h3 className="mb-1 truncate text-lg font-semibold text-gray-900">
+            {property.title || "Untitled Property"}
+          </h3>
+          <p className="mb-3 truncate text-sm text-gray-500">
+            {property.location || "No location specified"}
+          </p>
+          <div className="flex items-center justify-between">
+            <span className="rounded-lg bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700">
+              {property.price ? `$${Number(property.price).toLocaleString()}` : "N/A"}
+            </span>
+            <span className="flex items-center space-x-1 text-sm text-gray-500">
+              <FaRegImage className="h-4 w-4" />
+              <span>{hasPhotos ? property.photos.length : 0}</span>
+            </span>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="absolute right-3 top-3 flex space-x-2 opacity-0 transition-opacity group-hover:opacity-100">
+          <button
+            onClick={() => openModal(property)}
+            className="rounded-lg bg-white/90 p-2.5 shadow-sm transition-all hover:bg-gray-100 hover:-translate-y-0.5"
+            title="Edit property"
+          >
+            <FaEdit className="h-5 w-5 text-gray-700" />
+          </button>
+          <button
+            onClick={() => onRemoveProperty(property.id)}
+            className="rounded-lg bg-white/90 p-2.5 shadow-sm transition-all hover:bg-gray-100 hover:-translate-y-0.5"
+            title="Delete property"
+          >
+            <FaTrash className="h-5 w-5 text-rose-600" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const StatusSection = ({ title, count, color, properties, isRejected }) => {
+    const sectionColors = {
+      approved: { text: 'text-emerald-600', bg: 'bg-emerald-100' },
+      pending: { text: 'text-amber-600', bg: 'bg-amber-100' },
+      rejected: { text: 'text-rose-600', bg: 'bg-rose-100' }
+    };
+    
+    const statusKey = title.split(' ')[0].toLowerCase();
+    const { text, bg } = sectionColors[statusKey] || sectionColors.approved;
+
+    return (
+      <div className="mb-12">
+        <div className="mb-6 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h3 className={`text-2xl font-bold ${text}`}>{title}</h3>
+            <span className={`rounded-full px-3 py-1 text-sm font-medium ${bg} ${text}`}>
+              {count} property{count !== 1 && 's'}
+            </span>
+          </div>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {count > 0 ? properties.map((prop) =>
+            isRejected ? (
+              <RejectedPropertyCard
+                key={prop.id}
+                property={prop}
+                onEdit={openModal}
+                onRemove={onRemoveProperty}
+                onOpenDepositModal={onOpenDepositModal}
+              />
+            ) : (
+              <UniquePropertyCard key={prop.id} property={prop} />
+            )
+          ) : (
+            <div className="col-span-full py-12 text-center">
+              <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gray-50">
+                <FaRegFolderOpen className="h-10 w-10 text-gray-400" />
+              </div>
+              <p className="text-gray-500">No properties found in this category</p>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <section className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-gray-800">
-          Property Management
-        </h2>
+    <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      {/* Header */}
+      <div className="mb-8 flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold text-gray-900 sm:text-4xl bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
+            Property Portfolio
+          </h1>
+          <p className="text-lg text-gray-600">Manage and track your property listings</p>
+        </div>
         <button
-          className="inline-flex items-center px-3 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors"
           onClick={() => openModal()}
+          className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-blue-600 px-6 py-3.5 text-sm font-medium text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
         >
-          <FaPlus className="mr-2" />
-          Add Property
+          <FaPlus className="h-4 w-4" />
+          Add New Property
         </button>
       </div>
 
-      {properties.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {properties.map((property) => {
-            // We'll show the first image, or a placeholder if none
-            const hasImages = property.images && property.images.length > 0;
-            const thumbnail = hasImages
-              ? property.images[0]
-              : PLACEHOLDER_IMAGE;
+      {/* Content Sections */}
+      <div className="space-y-12">
+        <StatusSection
+          title="Approved Properties"
+          color="text-emerald-600"
+          count={approvedProperties.length}
+          properties={approvedProperties}
+        />
+        <StatusSection
+          title="Pending Approval"
+          color="text-amber-600"
+          count={pendingProperties.length}
+          properties={pendingProperties}
+        />
+        <StatusSection
+          title="Rejected Properties"
+          color="text-rose-600"
+          count={rejectedProperties.length}
+          properties={rejectedProperties}
+          isRejected
+        />
+      </div>
 
-            return (
-              <div
-                key={property.id}
-                className="bg-white border border-gray-200 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow flex flex-col"
-              >
-                {/* Top Image */}
-                <img
-                  src={thumbnail}
-                  alt={property.title || "Property"}
-                  className="w-full h-44 object-cover"
-                />
-
-                {/* Card Content */}
-                <div className="p-4 flex flex-col flex-1 justify-between">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-800 mb-1 line-clamp-1">
-                      {property.title}
-                    </h3>
-                    <p className="text-sm text-gray-500 mb-2 line-clamp-1">
-                      {property.location || "No location"}
-                    </p>
-
-                    <div className="text-sm text-gray-700 space-y-1">
-                      <p>
-                        <strong>Price:</strong>{" "}
-                        {property.price ? `$${property.price}` : "N/A"}
-                      </p>
-                      <p>
-                        <strong>Images:</strong>{" "}
-                        {hasImages
-                          ? `${property.images.length} images`
-                          : "No images"}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Card Actions */}
-                  <div className="flex items-center justify-end mt-3 space-x-2">
-                    <button
-                      className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
-                      onClick={() => openModal(property)}
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
-                      onClick={() => onRemoveProperty(property.id)}
-                    >
-                      <FaTrash />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500 mt-6">
-          No properties found. Click "Add Property" to create one.
-        </p>
-      )}
-
-      {/* Modal for Add/Edit */}
       {isModalOpen && (
         <PropertyModal
-          property={editingProperty} // or null for new
+          property={editingProperty}
           onClose={closeModal}
           onSave={handleSave}
         />
