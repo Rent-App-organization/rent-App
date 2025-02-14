@@ -9,7 +9,6 @@ export { default as PropertyDetails } from "./propertyDetails/PropertyDetails.js
 export { default as Checkout } from "./checkout/Checkout.jsx";
 export { default as Wishlist } from "./Wishlist/Wishlist.jsx";
 export { default as UserProfile } from "./userProfile/UserProfile.jsx";
-export { default as Support } from "./support/Support.jsx";
 export { default as Footer } from "./footer/Footer.jsx";
 export { default as About } from "./about/About.jsx";
 export { default as Contact } from "./contact/Contact.jsx";
