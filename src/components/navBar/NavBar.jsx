@@ -23,11 +23,10 @@ const Navbar = () => {
               {[
                 "Rentals",
                 "Wishlist",
-                "Support",
                 "AdminDash",
                 "SellerDash",
                 "about",
-                "contact"
+                "support"
               ].map((item) => (
                 <Link
                   key={item}
@@ -46,11 +45,10 @@ const Navbar = () => {
           {/* Right Section */}
           <div className="flex items-center space-x-6">
             <Link
-              to="/UserProfile"
+              to="/Login"
               className="hidden lg:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all"
             >
-              <LayoutDashboard className="h-5 w-5" />
-              User Profile
+              Login
             </Link>
           </div>
         </div>
