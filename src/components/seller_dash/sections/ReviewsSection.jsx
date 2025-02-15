@@ -21,7 +21,7 @@ export default function ReviewsSection({ reviews = [], properties = [] }) {
   }, [filteredReviews]);
 
   return (
-    <section className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+    <section className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden container mx-auto px-4 py-8">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#ECEBDE] to-[#D7D3BF] px-6 py-5 border-b border-gray-200">
         <div className="flex items-center space-x-4">

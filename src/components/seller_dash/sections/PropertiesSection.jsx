@@ -57,7 +57,7 @@ export default function PropertiesSection({
     const StatusIcon = statusIcons[property.status.toLowerCase()] || FaCheckCircle;
     
     return (
-      <div className="group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl">
+      <div className="group relative overflow-hidden rounded-2xl shadow-lg transition-all duration-300 hover:shadow-xl ">
         {/* Image Section */}
         <div className="relative h-64 w-full bg-gradient-to-br from-gray-50 to-gray-100">
           {hasPhotos ? (
