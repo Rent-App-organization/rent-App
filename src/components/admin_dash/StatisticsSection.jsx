@@ -11,13 +11,13 @@ export default function StatisticsSection() {
       try {
         // managers data
         const managersResponse = await axios.get(
-          `https://rental-website-bb300-default-rtdb.firebaseio.com/users.json`
+          `https://testrent-b52c9-default-rtdb.firebaseio.com/users.json`
         );
         setManagers(managersResponse.data ? Object.values(managersResponse.data) : []);
 
         // products data
         const listingsResponse = await axios.get(
-          `https://rental-website-bb300-default-rtdb.firebaseio.com/products.json`
+          `https://testrent-b52c9-default-rtdb.firebaseio.com/products.json`
         );
         setListings(listingsResponse.data ? Object.values(listingsResponse.data) : []); 
       } catch (error) {
