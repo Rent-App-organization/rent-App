@@ -1,9 +1,9 @@
-// src/components/seller_dash/SellerDash.jsx
 import React, { useState, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import { push, ref } from "firebase/database";
 
 import NavBar from "../navBar/NavBar";
 import PropertiesSection from "./sections/PropertiesSection";
@@ -14,15 +14,17 @@ import ReviewsSection from "./sections/ReviewsSection";
 import DepositRequestModal from "./modals/DepositRequestModal";
 import AlertModal from "./modals/AlertModal";
 
-import { 
-  subscribeToPropertiesBySeller, 
-  softDeleteProperty, 
+import {
+  subscribeToPropertiesBySeller,
+  softDeleteProperty,
   sendDepositRequest,
   updateBlockedDates,
-  updateProductBookedDates
+  updateProductBookedDates,
 } from "./service/PropertyService";
 import { subscribeToBookings, updateBookingStatus } from "./service/BookingService";
 import { subscribeToReviews } from "./service/ReviewService";
+
+import { database } from "../../fireBaseConfig";
 
 export default function SellerDash() {
   const navigate = useNavigate();
@@ -45,6 +47,12 @@ export default function SellerDash() {
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
+  // Helper function to send a notification to Firebase.
+  const sendNotification = async (notification) => {
+    const notificationsRef = ref(database, "notification");
+    return push(notificationsRef, notification);
+  };
+
   // Subscribe to seller properties.
   useEffect(() => {
     if (user) {
@@ -59,8 +67,8 @@ export default function SellerDash() {
   // Subscribe to bookings.
   useEffect(() => {
     const unsubscribe = subscribeToBookings((allBookings) => {
-      const sellerProductIds = properties.map(p => p.id);
-      const sellerBookings = allBookings.filter(b => sellerProductIds.includes(b.productId));
+      const sellerProductIds = properties.map((p) => p.id);
+      const sellerBookings = allBookings.filter((b) => sellerProductIds.includes(b.productId));
       console.log("Filtered seller bookings:", sellerBookings);
       setBookings(sellerBookings);
     });
@@ -73,10 +81,10 @@ export default function SellerDash() {
       const data = snapshot.val();
       let allReviews = [];
       if (data) {
-        allReviews = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+        allReviews = Object.keys(data).map((key) => ({ id: key, ...data[key] }));
       }
-      const propertyIds = properties.map(p => p.id);
-      const filteredReviews = allReviews.filter(review => propertyIds.includes(review.productId));
+      const propertyIds = properties.map((p) => p.id);
+      const filteredReviews = allReviews.filter((review) => propertyIds.includes(review.productId));
       setReviews(filteredReviews);
     });
     return () => unsubscribeReviews();
@@ -107,14 +115,15 @@ export default function SellerDash() {
   };
 
   // Handle booking actions with conflict checking.
+  // When approving a booking, also push a notification into Firebase.
   const handleBookingAction = async (bookingId, newStatus) => {
     try {
       if (newStatus.toLowerCase() === "approved") {
         // Find the booking object.
-        const booking = bookings.find(b => b.id === bookingId);
+        const booking = bookings.find((b) => b.id === bookingId);
         if (!booking) return;
-        // Find the corresponding product.
-        const product = properties.find(p => p.id === booking.productId);
+        // Find the corresponding property.
+        const product = properties.find((p) => p.id === booking.productId);
         if (!product) return;
         // Parse the booking's start and end dates.
         const newStart = dayjs(booking.startDate);
@@ -151,8 +160,35 @@ export default function SellerDash() {
           : [newRange];
         await updateProductBookedDates(product.id, updatedBookedDates);
       }
+
+      // Update the booking status.
       await updateBookingStatus(bookingId, newStatus);
       console.log(`Booking ${bookingId} updated to ${newStatus}`);
+
+      // Send notification to Firebase.
+      // Map booking status to notification status and message.
+      let notificationStatus, notificationMessage;
+      if (newStatus.toLowerCase() === "approved") {
+        notificationStatus = "approve";
+        notificationMessage = "Your request has been approved.";
+      } else if (newStatus.toLowerCase() === "declined") {
+        notificationStatus = "rejected";
+        notificationMessage = "Your request has been rejected.";
+      } else {
+        notificationStatus = newStatus.toLowerCase();
+        notificationMessage = "Your request is pending approval.";
+      }
+      // Assume the booking object contains a userId.
+      const booking = bookings.find((b) => b.id === bookingId);
+      if (booking && booking.userId) {
+        await sendNotification({
+          message: notificationMessage,
+          productId: booking.productId,
+          status: notificationStatus,
+          userId: booking.userId,
+          totalPrice: booking.totalPrice,
+        });
+      }
     } catch (error) {
       console.error("Error updating booking status:", error);
     }
@@ -160,7 +196,7 @@ export default function SellerDash() {
 
   // Toggle blocked date for a property.
   const handleToggleBlockedDate = async (propertyId, dateStr) => {
-    const property = properties.find(p => p.id === propertyId);
+    const property = properties.find((p) => p.id === propertyId);
     if (!property) {
       console.error("Property not found for id:", propertyId);
       return;
@@ -168,7 +204,7 @@ export default function SellerDash() {
     const currentBlocked = property.blockedDates || [];
     let newBlocked;
     if (currentBlocked.includes(dateStr)) {
-      newBlocked = currentBlocked.filter(d => d !== dateStr);
+      newBlocked = currentBlocked.filter((d) => d !== dateStr);
       console.log(`Unblocking date ${dateStr}`);
     } else {
       newBlocked = [...currentBlocked, dateStr];
@@ -176,8 +212,8 @@ export default function SellerDash() {
     }
     try {
       await updateBlockedDates(propertyId, newBlocked);
-      setProperties(prev =>
-        prev.map(p => (p.id === propertyId ? { ...p, blockedDates: newBlocked } : p))
+      setProperties((prev) =>
+        prev.map((p) => (p.id === propertyId ? { ...p, blockedDates: newBlocked } : p))
       );
     } catch (error) {
       console.error("Error updating blocked dates:", error);
@@ -222,7 +258,11 @@ export default function SellerDash() {
         isOpen={isDepositModalOpen}
         onClose={closeDepositModal}
         onSubmit={handleDepositRequest}
-        propertyTitle={selectedProperty ? properties.find(p => p.id === selectedProperty)?.title : ""}
+        propertyTitle={
+          selectedProperty
+            ? properties.find((p) => p.id === selectedProperty)?.title
+            : ""
+        }
       />
 
       {showAlert && (
