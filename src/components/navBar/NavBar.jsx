@@ -22,6 +22,7 @@ const Navbar = () => {
             <div className="flex space-x-6">
               {[
                 "Rentals",
+                "UserProfile",
                 "Wishlist",
                 "AdminDash",
                 "SellerDash",
