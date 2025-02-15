@@ -186,6 +186,7 @@ export default function SellerDash() {
           productId: booking.productId,
           status: notificationStatus,
           userId: booking.userId,
+          totalPrice: booking.totalPrice,
         });
       }
     } catch (error) {
