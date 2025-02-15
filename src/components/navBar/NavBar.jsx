@@ -1,7 +1,23 @@
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { LayoutDashboard } from "lucide-react";
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import app  from "../../fireBaseConfig.js";
 
 const Navbar = () => {
+  const [user, setUser] = useState(null);
+  const auth = getAuth(app);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, [auth]);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+
   return (
     <nav className="backdrop-blur-md bg-white/70 sticky top-0 z-50 border-b border-gray-100">
       <div className="container mx-auto px-4">
@@ -20,14 +36,7 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             <div className="flex space-x-6">
-              {[
-                "Rentals",
-                "Wishlist",
-                "AdminDash",
-                "SellerDash",
-                "about",
-                "support"
-              ].map((item) => (
+              {["Rentals", "Wishlist", "AdminDash", "SellerDash", "about", "support"].map((item) => (
                 <Link
                   key={item}
                   to={`/${item}`}
@@ -44,12 +53,21 @@ const Navbar = () => {
 
           {/* Right Section */}
           <div className="flex items-center space-x-6">
-            <Link
-              to="/Login"
-              className="hidden lg:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all"
-            >
-              Login
-            </Link>
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="hidden lg:flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all"
+              >
+                Logout
+              </button>
+            ) : (
+              <Link
+                to="/Login"
+                className="hidden lg:flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-all"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>
