@@ -1,7 +1,9 @@
+// src/components/seller_dash/SellerDash.jsx
 import React, { useState, useEffect } from "react";
 import { FaBars } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 import NavBar from "../navBar/NavBar";
 import PropertiesSection from "./sections/PropertiesSection";
@@ -10,18 +12,17 @@ import BookingsSection from "./sections/BookingsSection";
 import AnalyticsSection from "./sections/AnalyticsSection";
 import ReviewsSection from "./sections/ReviewsSection";
 import DepositRequestModal from "./modals/DepositRequestModal";
+import AlertModal from "./modals/AlertModal";
 
 import { 
   subscribeToPropertiesBySeller, 
   softDeleteProperty, 
   sendDepositRequest,
-  updateBlockedDates
+  updateBlockedDates,
+  updateProductBookedDates
 } from "./service/PropertyService";
 import { subscribeToBookings, updateBookingStatus } from "./service/BookingService";
 import { subscribeToReviews } from "./service/ReviewService";
-
-import { database } from "../../fireBaseConfig";
-import dayjs from "dayjs";
 
 export default function SellerDash() {
   const navigate = useNavigate();
@@ -39,6 +40,8 @@ export default function SellerDash() {
   const [reviews, setReviews] = useState([]);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -83,7 +86,6 @@ export default function SellerDash() {
     await softDeleteProperty(propertyId);
   };
 
-  // Deposit modal handlers.
   const openDepositModal = (property) => {
     setSelectedProperty(property);
     setIsDepositModalOpen(true);
@@ -104,9 +106,51 @@ export default function SellerDash() {
     }
   };
 
-  // Handle booking actions.
+  // Handle booking actions with conflict checking.
   const handleBookingAction = async (bookingId, newStatus) => {
     try {
+      if (newStatus.toLowerCase() === "approved") {
+        // Find the booking object.
+        const booking = bookings.find(b => b.id === bookingId);
+        if (!booking) return;
+        // Find the corresponding product.
+        const product = properties.find(p => p.id === booking.productId);
+        if (!product) return;
+        // Parse the booking's start and end dates.
+        const newStart = dayjs(booking.startDate);
+        const newEnd = dayjs(booking.endDate);
+        // Check conflict with existing approved booking ranges in product.bookedDate.
+        let conflict = false;
+        if (product.bookedDate && product.bookedDate.length > 0) {
+          for (const range of product.bookedDate) {
+            const existingStart = dayjs(range.startDate);
+            const existingEnd = dayjs(range.endDate);
+            if (
+              newStart.isBefore(existingEnd.add(1, "day")) &&
+              newEnd.isAfter(existingStart.subtract(1, "day"))
+            ) {
+              conflict = true;
+              break;
+            }
+          }
+        }
+        if (conflict) {
+          setAlertMessage(
+            "This booking request conflicts with an existing approved booking. Please check the calendar for booked dates."
+          );
+          setShowAlert(true);
+          return;
+        }
+        // If no conflict, update the product's bookedDate field.
+        const newRange = {
+          startDate: newStart.format("YYYY-MM-DD"),
+          endDate: newEnd.format("YYYY-MM-DD"),
+        };
+        const updatedBookedDates = product.bookedDate
+          ? [...product.bookedDate, newRange]
+          : [newRange];
+        await updateProductBookedDates(product.id, updatedBookedDates);
+      }
       await updateBookingStatus(bookingId, newStatus);
       console.log(`Booking ${bookingId} updated to ${newStatus}`);
     } catch (error) {
@@ -114,7 +158,7 @@ export default function SellerDash() {
     }
   };
 
-  // Define handleToggleBlockedDate here.
+  // Toggle blocked date for a property.
   const handleToggleBlockedDate = async (propertyId, dateStr) => {
     const property = properties.find(p => p.id === propertyId);
     if (!property) {
@@ -124,18 +168,14 @@ export default function SellerDash() {
     const currentBlocked = property.blockedDates || [];
     let newBlocked;
     if (currentBlocked.includes(dateStr)) {
-      // Unblock the date.
       newBlocked = currentBlocked.filter(d => d !== dateStr);
       console.log(`Unblocking date ${dateStr}`);
     } else {
-      // Block the date.
       newBlocked = [...currentBlocked, dateStr];
       console.log(`Blocking date ${dateStr}`);
     }
     try {
       await updateBlockedDates(propertyId, newBlocked);
-      console.log(`Property ${propertyId} blockedDates updated:`, newBlocked);
-      // Update local state.
       setProperties(prev =>
         prev.map(p => (p.id === propertyId ? { ...p, blockedDates: newBlocked } : p))
       );
@@ -148,7 +188,7 @@ export default function SellerDash() {
     <div className="relative flex min-h-screen bg-gray-50">
       <button
         className="sm:hidden fixed bottom-4 right-4 z-50 p-3 bg-indigo-600 text-white rounded-full shadow-lg"
-        onClick={toggleSidebar}
+        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
       >
         <FaBars />
       </button>
@@ -184,6 +224,13 @@ export default function SellerDash() {
         onSubmit={handleDepositRequest}
         propertyTitle={selectedProperty ? properties.find(p => p.id === selectedProperty)?.title : ""}
       />
+
+      {showAlert && (
+        <AlertModal
+          message={alertMessage}
+          onClose={() => setShowAlert(false)}
+        />
+      )}
     </div>
   );
 }

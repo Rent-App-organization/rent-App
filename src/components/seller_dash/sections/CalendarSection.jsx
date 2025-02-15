@@ -5,11 +5,10 @@ import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaHome } from "react-icon
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function CalendarSection({ bookings, properties, onToggleBlockedDate }) {
-  // Default to empty string.
   const [selectedProperty, setSelectedProperty] = useState("");
   const [currentDate, setCurrentDate] = useState(dayjs());
 
-  // When properties change, set selectedProperty to the first property's id.
+  // When properties change, select the first property's id.
   React.useEffect(() => {
     if (properties && properties.length > 0) {
       setSelectedProperty(properties[0].id);
@@ -20,26 +19,24 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
   const [selectedDate, setSelectedDate] = useState(null);
   const [blockModalOpen, setBlockModalOpen] = useState(false);
 
-  // Get the selected property object.
-  const selectedPropertyObj = properties.find((p) => p.id === selectedProperty);
+  // Get the selected property object and its blocked dates.
+  const selectedPropertyObj = properties.find(p => p.id === selectedProperty);
   const propertyBlocked = selectedPropertyObj?.blockedDates || [];
 
-  // Compute booked dates only from bookings with status "approved".
+  // Compute booked dates from the product’s approved booking ranges.
   const bookedDates = useMemo(() => {
-    if (!bookings) return [];
-    const dates = [];
-    bookings
-      .filter(b => b.productId === selectedProperty && b.status.toLowerCase() === "approved")
-      .forEach(booking => {
-        const start = dayjs(booking.startDate);
-        const end = dayjs(booking.endDate);
-        // Loop over each day in the approved booking period (inclusive).
+    let dates = [];
+    if (selectedPropertyObj && selectedPropertyObj.bookedDate) {
+      selectedPropertyObj.bookedDate.forEach(range => {
+        const start = dayjs(range.startDate);
+        const end = dayjs(range.endDate);
         for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
           dates.push(d.format("YYYY-MM-DD"));
         }
       });
+    }
     return dates;
-  }, [bookings, selectedProperty]);
+  }, [selectedPropertyObj]);
 
   // Build the calendar matrix.
   const calendarMatrix = useMemo(() => {
@@ -57,16 +54,14 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
   const goToPrevMonth = () => setCurrentDate(prev => prev.subtract(1, "month"));
   const goToNextMonth = () => setCurrentDate(prev => prev.add(1, "month"));
 
-  // Check if a day is booked.
   const isBooked = (dateObj) => {
     if (!dateObj) return false;
     return bookedDates.includes(dateObj.format("YYYY-MM-DD"));
   };
 
-  // On clicking an available day cell, open the block/unblock modal.
   const handleDayClick = (dayObj) => {
     if (!dayObj) return;
-    if (isBooked(dayObj)) return; // Do not allow toggling on approved booking days.
+    if (isBooked(dayObj)) return;
     setSelectedDate(dayObj);
     setBlockModalOpen(true);
   };
@@ -76,7 +71,6 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
     setSelectedDate(null);
   };
 
-  // Confirm toggle: call parent's handler.
   const confirmToggle = () => {
     if (selectedDate) {
       const dateStr = selectedDate.format("YYYY-MM-DD");
@@ -87,7 +81,7 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
   };
 
   return (
-    <section className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative">
+    <section className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden relative container mx-auto px-4 py-8">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#ECEBDE] to-[#D7D3BF] px-6 py-5 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -210,7 +204,7 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
         </div>
       </div>
 
-      {/* Block/Unblock Modal Form */}
+      {/* Block/Unblock Modal */}
       {blockModalOpen && selectedDate && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="bg-white rounded-xl p-6 w-full max-w-sm shadow-lg">
