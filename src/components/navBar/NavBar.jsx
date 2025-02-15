@@ -1,11 +1,7 @@
-
-
-
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserData, logoutUser, fetchUserNotifications } from "../../redux/authSlice";
-
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -67,8 +63,6 @@ const Navbar = () => {
 
   const navItems = getNavItems();
 
-  
-
   return (
     <nav className="backdrop-blur-md bg-white/95 sticky top-0 z-50 border-b border-gray-100 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -76,12 +70,12 @@ const Navbar = () => {
           
           {/* Logo Section */}
           <Link to="/" className="relative group flex items-center space-x-3 z-20">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-2 transition-all duration-300 group-hover:shadow-lg">
+            <div className="bg-[#A59D84] rounded-lg p-2 transition-all duration-300 group-hover:shadow-lg">
               <span className="text-white font-bold text-lg md:text-xl">HV</span>
             </div>
             <span className="text-gray-800 font-semibold text-base md:text-lg">
               Horizon Villas
-              <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-300"></div>
+              <div className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#A59D84] group-hover:w-full transition-all duration-300"></div>
             </span>
           </Link>
 
@@ -94,13 +88,13 @@ const Navbar = () => {
                   to={item.path}
                   className={`relative group py-2 px-1 ${
                     location.pathname === item.path
-                      ? "text-blue-600 font-medium"
+                      ? "text-[#A59D84] font-medium"
                       : "text-gray-600 hover:text-gray-900"
                   } transition-colors duration-200`}
                 >
                   <span className="relative z-10">{item.name}</span>
                   <div 
-                    className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300 ${
+                    className={`absolute bottom-0 left-0 h-0.5 bg-[#A59D84] transition-all duration-300 ${
                       location.pathname === item.path ? "w-full" : "w-0 group-hover:w-full"
                     }`}
                   ></div>
@@ -117,7 +111,7 @@ const Navbar = () => {
               <div className="relative" ref={notifRef}>
                 <button
                   onClick={() => setIsNotifOpen(!isNotifOpen)}
-                  className="relative p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-all"
+                  className="relative p-2 rounded-full bg-[#C1BAA1] hover:bg-[#A59D84] transition-all"
                 >
                   <svg className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14V11A6.002 6.002 0 009.674 5.201A4 4 0 009 3a4 4 0 00-4 4v1H3v1h16v1h-1v2a2 2 0 01-2 2h-1z" />
@@ -141,7 +135,7 @@ const Navbar = () => {
                             {notif.status === "approve" && (
                               <Link
                                 to="/checkout"
-                                className="mt-2 px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+                                className="mt-2 px-3 py-1 text-sm bg-[#A59D84] text-white rounded-md hover:bg-[#C1BAA1] transition"
                               >
                                 Checkout
                               </Link>
@@ -162,13 +156,13 @@ const Navbar = () => {
               <>
                 <Link
                   to="/UserProfile"
-                  className="px-4 py-2 bg-blue-600 text-white rounded-full"
+                  className="px-4 py-2 bg-[#A59D84] text-white rounded-full"
                 >
                   Profile
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 border border-red-500 text-red-500 rounded-full"
+                  className="px-4 py-2 border border-[#A59D84] text-[#A59D84] rounded-full"
                 >
                   Logout
                 </button>
@@ -176,7 +170,7 @@ const Navbar = () => {
             ) : (
               <Link
                 to="/Login"
-                className="px-4 py-2 bg-blue-600 text-white rounded-full"
+                className="px-4 py-2 bg-[#A59D84] text-white rounded-full"
               >
                 Login
               </Link>

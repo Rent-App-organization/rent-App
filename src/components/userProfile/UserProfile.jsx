@@ -117,9 +117,6 @@ const UserProfile = () => {
     }
   };
 
-  const handleLogout = async () => {
-    dispatch(logoutUser());
-  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -137,9 +134,9 @@ const UserProfile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12 px-4">
+    <div className="min-h-screen bg-gray-100 py-12 px-4">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div className="relative h-48 bg-gradient-to-r from-blue-600 to-indigo-600">
+        <div className="relative h-48 bg-[#A59D84]">
           <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
             <div className="relative">
               <img
@@ -149,7 +146,7 @@ const UserProfile = () => {
               />
               <label
                 htmlFor="imageUpload"
-                className="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105"
+                className="absolute bottom-0 right-0 bg-[#A59D84] hover:bg-[#A59D84] text-white p-2 rounded-full shadow-lg cursor-pointer transition-all duration-200 transform hover:scale-105"
               >
                 <Camera className="h-5 w-5" />
               </label>
@@ -178,7 +175,7 @@ const UserProfile = () => {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#A59D84] focus:border-[#A59D84] transition-colors bg-gray-50"
                 placeholder="Enter your full name"
               />
             </div>
@@ -203,7 +200,7 @@ const UserProfile = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#A59D84] focus:border-[#A59D84] transition-colors bg-gray-50"
                 placeholder="Enter your phone number"
               />
             </div>
@@ -216,7 +213,7 @@ const UserProfile = () => {
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#A59D84] focus:border-[#A59D84] transition-colors bg-gray-50"
                 placeholder="Enter your address"
               />
             </div>
@@ -229,7 +226,7 @@ const UserProfile = () => {
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors bg-gray-50"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#A59D84] focus:border-[#A59D84] transition-colors bg-gray-50"
                 placeholder="Enter your city"
               />
             </div>
@@ -238,17 +235,10 @@ const UserProfile = () => {
           <div className="mt-8 flex justify-end space-x-4">
             <button
               onClick={handleSave}
-              className="flex items-center px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md transition-all duration-200 transform hover:scale-105"
+              className="flex items-center px-6 py-2 bg-[#A59D84] hover:bg-[#A59D84] text-white rounded-lg shadow-md transition-all duration-200 transform hover:scale-105"
             >
               <Save className="h-5 w-5 mr-2" />
               Save Changes
-            </button>
-            <button
-              onClick={handleLogout}
-              className="flex items-center px-6 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md transition-all duration-200 transform hover:scale-105"
-            >
-              <LogOut className="h-5 w-5 mr-2" />
-              Logout
             </button>
           </div>
 
@@ -281,7 +271,7 @@ const UserProfile = () => {
                     </p>
                     <button
                       onClick={() => openModal(rental)}
-                      className="mt-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
+                      className="mt-2 bg-[#A59D84] hover:bg-[#A59D84] text-white px-4 py-2 rounded-lg"
                     >
                       Add Review
                     </button>
@@ -318,7 +308,7 @@ const UserProfile = () => {
 
       {/* تعليق المستخدم */}
       <textarea
-        className="w-full p-2 border border-gray-300 rounded-lg mt-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full p-2 border border-gray-300 rounded-lg mt-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#A59D84]"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
         placeholder="Enter your comment..."
@@ -339,7 +329,7 @@ const UserProfile = () => {
             toast.success("Review saved successfully!"); // عرض التنبيه
             closeModal(); // إغلاق البوب-اب
           }}
-          className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all"
+          className="px-6 py-2 bg-[#A59D84] text-white rounded-lg hover:bg-[#A59D84] transition-all"
         >
           Save
         </button>

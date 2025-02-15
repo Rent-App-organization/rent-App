@@ -101,9 +101,9 @@ const BecomeOwnerProfile = () => {
             />
             <label
               htmlFor="imageUpload"
-              className="absolute bottom-0 right-0 bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full shadow-lg cursor-pointer transition-all"
+              className="absolute bottom-0 right-0 bg-[#A59D84] hover:bg-blue-600 text-white p-2 rounded-full shadow-lg cursor-pointer transition-all"
             >
-              <Camera className="h-5 w-5" />
+              <Camera className="h-5 w-5 " />
             </label>
             <input
               type="file"
@@ -194,7 +194,7 @@ const BecomeOwnerProfile = () => {
         <div className="text-center">
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+            className="w-full py-2 px-4 bg-[#A59D84] text-white rounded-md hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
             disabled={loading}
           >
             {loading ? "Submitting..." : "Submit Request"}
