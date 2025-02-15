@@ -1,3 +1,5 @@
+
+
 import { useState, useEffect } from "react";
 import { database, auth } from "../../fireBaseConfig";
 import { ref, get } from "firebase/database";
@@ -9,24 +11,33 @@ import Footer from "../footer/Footer";
 
 const Wishlist = () => {
   const [wishlistProducts, setWishlistProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchWishlist = async () => {
+      setIsLoading(true);
       const user = auth.currentUser;
-      if (!user) return;
+      if (!user) {
+        setIsLoading(false);
+        return;
+      }
 
       const wishlistRef = ref(database, `wishlist/${user.uid}`);
       try {
         const snapshot = await get(wishlistRef);
         if (snapshot.exists()) {
           const wishlistData = snapshot.val();
-          const itemIds = Object.keys(wishlistData); // Extract wishlist item IDs
-          fetchProductDetails(itemIds); // Fetch product details
+          const itemIds = Object.keys(wishlistData);
+          await fetchProductDetails(itemIds);
         } else {
           setWishlistProducts([]);
         }
       } catch (error) {
         console.error("Error fetching wishlist:", error);
+        setError("Failed to load your wishlist. Please try again later.");
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -39,14 +50,51 @@ const Wishlist = () => {
         });
 
         const products = await Promise.all(productPromises);
-        setWishlistProducts(products.filter((product) => product !== null)); // Filter out null values
+        setWishlistProducts(products.filter((product) => product !== null));
       } catch (error) {
         console.error("Error fetching product details:", error);
+        setError("Failed to load product details. Please try again later.");
       }
     };
 
     fetchWishlist();
   }, []);
+
+  const removeFromWishlist = (id) => {
+    // This function would implement the removal logic
+    console.log(`Remove item ${id} from wishlist`);
+  };
+
+  const addToCart = (product) => {
+    // This function would implement the add to cart logic
+    console.log(`Add ${product.location} to cart`);
+  };
+
+  if (isLoading) {
+    return (
+      <div className="max-w-3xl mx-auto p-8 bg-white shadow-lg rounded-lg">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+          <div className="space-y-3">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="h-24 bg-gray-200 rounded"></div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto p-8 bg-white shadow-lg rounded-lg">
+        <div className="text-center text-red-500">
+          <XCircle className="mx-auto h-12 w-12 mb-4" />
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

@@ -1,44 +1,22 @@
- [
-      {
-        "id": "rental_001",
-        "userId": "user_123",
-        "propertyId": "villa_456",
-        "villaName": "Luxury Beachfront Villa",
-        "location": "Miami, FL",
-        "rentedDate": "2024-02-01",
-        "returnDate": "2024-02-10",
-        "pricePerNight": 500
-      },
-      {
-        "id": "rental_002",
-        "userId": "user_123",
-        "propertyId": "villa_789",
-        "villaName": "Mountain View Retreat",
-        "location": "Aspen, CO",
-        "rentedDate": "2024-02-05",
-        "returnDate": "2024-02-15",
-        "pricePerNight": 750
-      },
-      {
-        "id": "rental_003",
-        "userId": "user_456",
-        "propertyId": "villa_123",
-        "villaName": "Private Island Getaway",
-        "location": "Maldives",
-        "rentedDate": "2024-01-20",
-        "returnDate": "2024-01-30",
-        "pricePerNight": 1200
-      },
-      {
-        "id": "rental_004",
-        "userId": "user_789",
-        "propertyId": "villa_321",
-        "villaName": "Modern City Penthouse",
-        "location": "Dubai, UAE",
-        "rentedDate": "2024-02-10",
-        "returnDate": "2024-02-20",
-        "pricePerNight": 900
-      }
-    ]
-  
-  
+
+  [
+    {
+      "userId": "user12345",
+      "productId": "product67890",
+      "status": "pending",
+      "message": "Your request is pending approval."
+    },
+    {
+      "userId": "user67890",
+      "productId": "product12345",
+      "status": "approve",
+      "message": "Your request has been approved."
+    },
+    {
+      "userId": "user54321",
+      "productId": "product98765",
+      "status": "rejected",
+      "message": "Your request has been rejected."
+    }
+  ]
+
