@@ -391,22 +391,22 @@ const PropertyDetails = () => {
                             )}{" "}
                             nights
                           </span>
-                          <span>${calculateTotalPrice()}</span>
+                          <span>JD{calculateTotalPrice()}</span>
                         </div>
                         <div className="flex justify-between items-center mb-2">
                           <span>Cleaning fee</span>
-                          <span>${property.cleaningFee || 0}</span>
+                          <span>JD{property.cleaningFee || 50}</span>
                         </div>
                         <div className="flex justify-between items-center mb-2">
                           <span>Service fee</span>
                           <span>
-                            ${Math.round(calculateTotalPrice() * 0.1)}
+                          JD{Math.round(calculateTotalPrice() * 0.1)}
                           </span>
                         </div>
                         <div className="border-t border-gray-300 mt-3 pt-3">
                           <div className="flex justify-between items-center font-bold">
                             <span>Total</span>
-                            <span>${calculateFullTotal()}</span>
+                            <span>JD{calculateFullTotal()}</span>
                           </div>
                         </div>
                       </div>
