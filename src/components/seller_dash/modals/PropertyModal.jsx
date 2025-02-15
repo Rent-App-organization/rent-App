@@ -8,6 +8,7 @@ import {
   FaHome,
   FaEdit,
 } from "react-icons/fa";
+import dayjs from "dayjs";
 
 import { createProperty, updateProperty } from "../service/PropertyService.js";
 
@@ -17,6 +18,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
   // Get the current user from Redux.
   const user = useSelector((state) => state.auth.user);
 
+  // Use one date input field.
   const [formData, setFormData] = useState({
     title: "",
     location: "",
@@ -24,8 +26,8 @@ export default function PropertyModal({ property, onClose, onSave }) {
     bedrooms: "",
     area: "",
     category: "",
-    date: "",
-    price: "",
+    date: "", // in YYYY-MM-DD format from input
+    price: 0,
     photos: [],
     description: "",
     seller: user ? user.uid : "",
@@ -41,7 +43,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
     }
   }, []);
 
-  // When editing, load property data (and include seller info).
+  // When editing, load property data.
   useEffect(() => {
     if (property) {
       setFormData({
@@ -51,10 +53,9 @@ export default function PropertyModal({ property, onClose, onSave }) {
         bedrooms: property.bedrooms || "",
         area: property.area || "",
         category: property.category || "",
-        date: property.date
-          ? new Date(property.date).toISOString().split("T")[0]
-          : "",
-        price: property.price || "",
+        // For editing, assume the stored date is already in the "YYYY-MM-DD" format.
+        date: property.date || "",
+        price: property.price || 0,
         photos: property.photos || [],
         description: property.description || "",
         seller: property.seller || (user ? user.uid : ""),
@@ -89,12 +90,12 @@ export default function PropertyModal({ property, onClose, onSave }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Prepare data for saving.
       const dataToSave = { ...formData };
       if (dataToSave.date) {
-        dataToSave.date = new Date(dataToSave.date).getTime();
+        // Convert the selected date into "YYYY-MM-DD" format
+        dataToSave.date = dayjs(dataToSave.date).format("YYYY-MM-DD");
       }
-      // Use the service functions: update if editing, create if new.
+      // Save data: update if editing, create if new.
       if (property && property.id) {
         await updateProperty(property.id, dataToSave);
       } else {
@@ -112,9 +113,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
       <div className="flex items-center justify-center min-h-screen px-4">
         <div
           ref={modalRef}
-          className="transform transition-all duration-500 ease-out opacity-0 translate-y-8
-                     bg-gradient-to-br from-white to-indigo-50 w-full max-w-2xl rounded-3xl p-8 relative 
-                     shadow-2xl border-2 border-indigo-50 max-h-[90vh] overflow-y-auto"
+          className="transform transition-all duration-500 ease-out opacity-0 translate-y-8 bg-gradient-to-br from-white to-indigo-50 w-full max-w-2xl rounded-3xl p-8 relative shadow-2xl border-2 border-indigo-50 max-h-[90vh] overflow-y-auto"
         >
           <button
             onClick={onClose}
@@ -250,10 +249,9 @@ export default function PropertyModal({ property, onClose, onSave }) {
                   <option value="Amazing pools">Amazing Pools</option>
                 </select>
               </div>
+              {/* Single Date Input */}
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-gray-700">
-                  Date
-                </label>
+                <label className="text-sm font-semibold text-gray-700">Date</label>
                 <input
                   type="date"
                   className="w-full px-4 py-3.5 border-2 border-[#ECEBDE] rounded-xl focus:ring-4 focus:ring-[#A59D84] focus:border-[#A59D84] transition-all"
@@ -262,6 +260,9 @@ export default function PropertyModal({ property, onClose, onSave }) {
                     setFormData({ ...formData, date: e.target.value })
                   }
                 />
+                <p className="text-xs text-gray-500">
+                  The date will be saved as "YYYY-MM-DD" (e.g., "2025-02-15")
+                </p>
               </div>
             </div>
 
@@ -278,7 +279,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
                 placeholder="Enter price (optional)"
                 value={formData.price}
                 onChange={(e) =>
-                  setFormData({ ...formData, price: e.target.value })
+                  setFormData({ ...formData, price: Number(e.target.value) })
                 }
               />
             </div>
@@ -310,7 +311,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
                 <button
                   type="button"
                   onClick={handleAddImage}
-                  className="flex items-center gap-2 px-5 py-2.5 bg-[#A59D84]  text-white rounded-xl hover:bg-[#543A14]  text-white rounded-xl transition-all shadow-md hover:shadow-lg"
+                  className="flex items-center gap-2 px-5 py-2.5 bg-[#A59D84] text-white rounded-xl hover:bg-[#543A14] transition-all shadow-md hover:shadow-lg"
                 >
                   <FaImage className="w-4 h-4" />
                   Add Image
@@ -356,7 +357,7 @@ export default function PropertyModal({ property, onClose, onSave }) {
               </button>
               <button
                 type="submit"
-                className="px-8 py-3.5 bg-[#A59D84]  text-white rounded-xl hover:bg-[#543A14] transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                className="px-8 py-3.5 bg-[#A59D84] text-white rounded-xl hover:bg-[#543A14] transition-all shadow-md hover:shadow-lg flex items-center gap-2"
               >
                 <FaEdit className="w-5 h-5" />
                 {property ? "Update Property" : "Create Listing"}
