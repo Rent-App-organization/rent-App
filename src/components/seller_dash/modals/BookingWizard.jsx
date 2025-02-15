@@ -11,12 +11,12 @@ export default function BookingWizard({ booking, onCloseAll }) {
   const handleGuestBack = () => setStep("booking");
   const handleCloseAll = () => onCloseAll?.();
 
-  // Build guest data using booking fields
+  // Build guest data using booking fields.
   const guestData = {
     name: booking.fullName || "",
-    email: booking.guestEmail || "", // If available
+    email: booking.guestEmail || "", // may be empty; will be fetched from users if so
     phone: booking.phoneNumber || "",
-    avatar: booking.guestAvatar || "",
+    avatar: booking.guestAvatar || ""
   };
 
   return (
@@ -31,6 +31,7 @@ export default function BookingWizard({ booking, onCloseAll }) {
       {step === "guest" && (
         <GuestDetailsModal
           guest={guestData}
+          booking={booking}   
           onCloseAll={handleCloseAll}
           onBack={handleGuestBack}
         />

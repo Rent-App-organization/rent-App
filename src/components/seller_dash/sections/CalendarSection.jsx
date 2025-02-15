@@ -1,36 +1,41 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import dayjs from "dayjs";
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaHome } from "react-icons/fa";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 export default function CalendarSection({ bookings, properties, onToggleBlockedDate }) {
-  // Default to first property in the list.
-  const [selectedProperty, setSelectedProperty] = useState(
-    properties && properties.length > 0 ? properties[0].id : ""
-  );
+  // Default to empty string.
+  const [selectedProperty, setSelectedProperty] = useState("");
   const [currentDate, setCurrentDate] = useState(dayjs());
 
-  // For the block/unblock modal.
+  // When properties change, set selectedProperty to the first property’s id.
+  useEffect(() => {
+    if (properties && properties.length > 0) {
+      setSelectedProperty(properties[0].id);
+    }
+  }, [properties]);
+
+  // State for the block/unblock modal.
   const [selectedDate, setSelectedDate] = useState(null);
   const [blockModalOpen, setBlockModalOpen] = useState(false);
 
   // Get the selected property object.
-  const selectedPropertyObj = properties.find(p => p.id === selectedProperty);
+  const selectedPropertyObj = properties.find((p) => p.id === selectedProperty);
   const propertyBlocked = selectedPropertyObj?.blockedDates || [];
 
   // Compute booked dates for the selected property.
   const bookedDates = useMemo(() => {
     if (!bookings) return [];
     const dates = [];
-    bookings.filter(b => b.productId === selectedProperty)
-      .forEach(booking => {
-        const start = dayjs(booking.startDate);
-        const end = dayjs(booking.endDate);
-        for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
-          dates.push(d.format("YYYY-MM-DD"));
-        }
-      });
+    bookings.filter((b) => b.productId === selectedProperty).forEach((booking) => {
+      const start = dayjs(booking.startDate);
+      const end = dayjs(booking.endDate);
+      // Loop over each day in the booking period (inclusive).
+      for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
+        dates.push(d.format("YYYY-MM-DD"));
+      }
+    });
     return dates;
   }, [bookings, selectedProperty]);
 
@@ -39,21 +44,24 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
     const startOfMonth = currentDate.startOf("month");
     const startDay = startOfMonth.day();
     const daysInMonth = currentDate.daysInMonth();
-    const calendarDays = [];
-    for (let i = 0; i < startDay; i++) calendarDays.push(null);
-    for (let d = 1; d <= daysInMonth; d++) calendarDays.push(currentDate.date(d));
-    return calendarDays;
+    const matrix = [];
+    for (let i = 0; i < startDay; i++) matrix.push(null);
+    for (let d = 1; d <= daysInMonth; d++) {
+      matrix.push(currentDate.date(d));
+    }
+    return matrix;
   }, [currentDate]);
 
   const goToPrevMonth = () => setCurrentDate(prev => prev.subtract(1, "month"));
   const goToNextMonth = () => setCurrentDate(prev => prev.add(1, "month"));
 
+  // Check if a day is booked.
   const isBooked = (dateObj) => {
     if (!dateObj) return false;
     return bookedDates.includes(dateObj.format("YYYY-MM-DD"));
   };
 
-  // When a day cell is clicked (if not booked), open modal.
+  // When an available day cell is clicked, open the modal.
   const handleDayClick = (dayObj) => {
     if (!dayObj) return;
     if (isBooked(dayObj)) return;
@@ -66,11 +74,12 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
     setSelectedDate(null);
   };
 
-  // Confirm toggling: call handler with selectedProperty and date string.
+  // Confirm toggle: call parent's handler.
   const confirmToggle = () => {
     if (selectedDate) {
-      onToggleBlockedDate(selectedProperty, selectedDate.format("YYYY-MM-DD"));
-      console.log("Toggled date:", selectedDate.format("YYYY-MM-DD"), "for property", selectedProperty);
+      const dateStr = selectedDate.format("YYYY-MM-DD");
+      onToggleBlockedDate(selectedProperty, dateStr);
+      console.log("Toggled date:", dateStr, "for property", selectedProperty);
     }
     closeBlockModal();
   };
@@ -82,10 +91,10 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="p-3 bg-white rounded-xl shadow-sm">
-              <FaCalendarAlt className="text text-xl" />
+              <FaCalendarAlt className="text-xl text-[#4A4947]" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">Availability Calendar</h2>
+              <h2 className="text-2xl font-bold text-[#4A4947]">Availability Calendar</h2>
               <p className="text-sm text-gray-600">View and manage property bookings</p>
             </div>
           </div>
@@ -106,9 +115,7 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
       {/* Property Filter */}
       <div className="px-6 py-4 border-b border-gray-200">
         <div className="max-w-xs">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Select Property
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Select Property</label>
           <div className="relative">
             <select
               value={selectedProperty}
@@ -144,9 +151,7 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
         {/* Days */}
         <div className="grid grid-cols-7 gap-2">
           {calendarMatrix.map((dayObj, idx) => {
-            if (!dayObj) {
-              return <div key={idx} className="h-16 bg-gray-50 rounded-lg" />;
-            }
+            if (!dayObj) return <div key={idx} className="h-16 bg-gray-50 rounded-lg" />;
             const dateStr = dayObj.format("YYYY-MM-DD");
             const booked = isBooked(dayObj);
             const blocked = propertyBlocked.includes(dateStr);
@@ -169,16 +174,13 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
               textColor = "text-emerald-700";
               label = "Available";
             }
-
             return (
               <div
                 key={dateStr}
                 className={`group h-16 flex flex-col items-center justify-center rounded-lg border transition-all ${bgColor} ${borderColor} ${isToday ? "ring-2 ring-indigo-300" : ""} cursor-pointer`}
                 onClick={() => !booked && handleDayClick(dayObj)}
               >
-                <span className={`text-sm font-medium ${textColor}`}>
-                  {dayObj.date()}
-                </span>
+                <span className={`text-sm font-medium ${textColor}`}>{dayObj.date()}</span>
                 <span className="text-xs mt-0.5">{label}</span>
               </div>
             );
@@ -196,7 +198,7 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
             <span className="text-gray-600">Booked</span>
           </div>
           <div className="flex items-center space-x-1.5">
-            <div className="w-3 h-3 bg-gray-400 rounded-sm" />
+            <div className="w-3 h-3 bg-gray-300 rounded-sm" />
             <span className="text-gray-600">Blocked</span>
           </div>
           <div className="flex items-center space-x-1.5">
