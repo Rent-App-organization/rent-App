@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import dayjs from "dayjs";
 import { FaCalendarAlt, FaChevronLeft, FaChevronRight, FaHome } from "react-icons/fa";
 
@@ -9,8 +9,8 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
   const [selectedProperty, setSelectedProperty] = useState("");
   const [currentDate, setCurrentDate] = useState(dayjs());
 
-  // When properties change, set selectedProperty to the first property’s id.
-  useEffect(() => {
+  // When properties change, set selectedProperty to the first property's id.
+  React.useEffect(() => {
     if (properties && properties.length > 0) {
       setSelectedProperty(properties[0].id);
     }
@@ -24,18 +24,20 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
   const selectedPropertyObj = properties.find((p) => p.id === selectedProperty);
   const propertyBlocked = selectedPropertyObj?.blockedDates || [];
 
-  // Compute booked dates for the selected property.
+  // Compute booked dates only from bookings with status "approved".
   const bookedDates = useMemo(() => {
     if (!bookings) return [];
     const dates = [];
-    bookings.filter((b) => b.productId === selectedProperty).forEach((booking) => {
-      const start = dayjs(booking.startDate);
-      const end = dayjs(booking.endDate);
-      // Loop over each day in the booking period (inclusive).
-      for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
-        dates.push(d.format("YYYY-MM-DD"));
-      }
-    });
+    bookings
+      .filter(b => b.productId === selectedProperty && b.status.toLowerCase() === "approved")
+      .forEach(booking => {
+        const start = dayjs(booking.startDate);
+        const end = dayjs(booking.endDate);
+        // Loop over each day in the approved booking period (inclusive).
+        for (let d = start; d.isBefore(end) || d.isSame(end, "day"); d = d.add(1, "day")) {
+          dates.push(d.format("YYYY-MM-DD"));
+        }
+      });
     return dates;
   }, [bookings, selectedProperty]);
 
@@ -61,10 +63,10 @@ export default function CalendarSection({ bookings, properties, onToggleBlockedD
     return bookedDates.includes(dateObj.format("YYYY-MM-DD"));
   };
 
-  // When an available day cell is clicked, open the modal.
+  // On clicking an available day cell, open the block/unblock modal.
   const handleDayClick = (dayObj) => {
     if (!dayObj) return;
-    if (isBooked(dayObj)) return;
+    if (isBooked(dayObj)) return; // Do not allow toggling on approved booking days.
     setSelectedDate(dayObj);
     setBlockModalOpen(true);
   };

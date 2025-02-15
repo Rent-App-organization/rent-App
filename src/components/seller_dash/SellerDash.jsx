@@ -21,6 +21,7 @@ import { subscribeToBookings, updateBookingStatus } from "./service/BookingServi
 import { subscribeToReviews } from "./service/ReviewService";
 
 import { database } from "../../fireBaseConfig";
+import dayjs from "dayjs";
 
 export default function SellerDash() {
   const navigate = useNavigate();
@@ -37,7 +38,6 @@ export default function SellerDash() {
   const [bookings, setBookings] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
-  // This is used for deposit requests; for toggling blocked dates, we'll pass propertyId separately.
   const [selectedProperty, setSelectedProperty] = useState(null);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -53,10 +53,9 @@ export default function SellerDash() {
     }
   }, [user]);
 
-  // Subscribe to bookings using BookingService.
+  // Subscribe to bookings.
   useEffect(() => {
     const unsubscribe = subscribeToBookings((allBookings) => {
-      // Filter bookings to include only those whose productId is one of the seller's properties.
       const sellerProductIds = properties.map(p => p.id);
       const sellerBookings = allBookings.filter(b => sellerProductIds.includes(b.productId));
       console.log("Filtered seller bookings:", sellerBookings);
@@ -105,7 +104,7 @@ export default function SellerDash() {
     }
   };
 
-  // Handle booking actions using BookingService.
+  // Handle booking actions.
   const handleBookingAction = async (bookingId, newStatus) => {
     try {
       await updateBookingStatus(bookingId, newStatus);
@@ -115,8 +114,7 @@ export default function SellerDash() {
     }
   };
 
-  // Toggle blocked date for a property.
-  // This function receives propertyId and a date string.
+  // Define handleToggleBlockedDate here.
   const handleToggleBlockedDate = async (propertyId, dateStr) => {
     const property = properties.find(p => p.id === propertyId);
     if (!property) {
@@ -158,31 +156,25 @@ export default function SellerDash() {
       <div className="flex-1 flex flex-col">
         <NavBar />
         <main className="p-4 sm:p-6 overflow-y-auto space-y-6">
-          
-        <AnalyticsSection properties={properties} bookings={bookings} />
-        <PropertiesSection
+          <AnalyticsSection properties={properties} bookings={bookings} />
+          <PropertiesSection
             properties={properties}
             onAddProperty={() => {}}
             onEditProperty={() => {}}
             onRemoveProperty={handleRemoveProperty}
             onOpenDepositModal={openDepositModal}
           />
-        <BookingsSection
+          <BookingsSection
             bookings={bookings}
             properties={properties}
             onBookingAction={handleBookingAction}
           />
-
-<CalendarSection
+          <CalendarSection
             bookings={bookings}
             properties={properties}
             onToggleBlockedDate={handleToggleBlockedDate}
           />
-          
           <ReviewsSection reviews={reviews} properties={properties} />
-
-          
-
         </main>
       </div>
 
@@ -190,9 +182,7 @@ export default function SellerDash() {
         isOpen={isDepositModalOpen}
         onClose={closeDepositModal}
         onSubmit={handleDepositRequest}
-        propertyTitle={
-          selectedProperty ? properties.find(p => p.id === selectedProperty)?.title : ""
-        }
+        propertyTitle={selectedProperty ? properties.find(p => p.id === selectedProperty)?.title : ""}
       />
     </div>
   );
