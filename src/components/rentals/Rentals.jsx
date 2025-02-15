@@ -7,6 +7,8 @@ import axios from "axios";
 import { setRentals, setLoading, setError } from "../../redux/rentalSlice";
 import background from "./assets/houses_bg.jpg";
 import RentalCard from "./RentalCard";
+import { Link } from "react-router-dom";
+
 
 const Rentals = () => {
   const dispatch = useDispatch();
@@ -24,7 +26,7 @@ const Rentals = () => {
 
       try {
         const response = await axios.get(
-          "https://testrent-b52c9-default-rtdb.firebaseio.com//products.json"
+          "https://testrent-b52c9-default-rtdb.firebaseio.com/products.json"
         );
         const data = response.data;
 
@@ -160,14 +162,18 @@ const Rentals = () => {
           </button>
         </div>
 
-        {/* Call to Action */}
-        <div className="text-[#000] py-12 text-center">
-          <h2 className="text-3xl font-bold">Become a Host</h2>
-          <p className="mt-2 text-lg">Earn money by renting out your villa to travelers.</p>
-          <button className="cursor-pointer text-white mt-4 bg-[#A59D84] px-6 py-3 rounded-lg font-bold transition">
-            List Your Villa
-          </button>
-        </div>
+
+{/* Call to Action */}
+<div className="text-[#000] py-12 text-center">
+  <h2 className="text-3xl font-bold">Become a Host</h2>
+  <p className="mt-2 text-lg">Earn money by renting out your villa to travelers.</p>
+  <Link to="/BecomeOwnerProfile">
+    <button className="cursor-pointer text-white mt-4 bg-[#A59D84] px-6 py-3 rounded-lg font-bold transition">
+      List Your Villa
+    </button>
+  </Link>
+</div>
+
       </div>
       <Footer />
     </>

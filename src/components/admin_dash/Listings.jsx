@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { ref, update } from "firebase/database";
-import { database } from "../../firebaseConfig";
+import { database } from "../../fireBaseConfig";
 
 export default function Listings() {
   const [listings, setListings] = useState([]);

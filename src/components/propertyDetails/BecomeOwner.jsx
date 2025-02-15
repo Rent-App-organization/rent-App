@@ -72,7 +72,7 @@ const BecomeOwnerProfile = () => {
       dispatch(updateUserData(formData));
 
       toast.success("Your request has been sent for approval!");
-      navigate("/profile"); // إعادة التوجيه إلى الصفحة الرئيسية بعد الإرسال
+      navigate("/"); // إعادة التوجيه إلى الصفحة الرئيسية بعد الإرسال
     } catch (error) {
       console.error("Error updating user:", error);
       toast.error("Failed to update profile");
