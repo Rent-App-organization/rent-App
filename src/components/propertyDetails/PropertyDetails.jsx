@@ -121,6 +121,8 @@ const PropertyDetails = () => {
     }
 
     setSelectedRange(range);
+    calculateTotalPrice(); // This will recalculate based on the new date range
+    calculateFullTotal(); 
   };
 
   // Calculate total price if property and selected range exist
