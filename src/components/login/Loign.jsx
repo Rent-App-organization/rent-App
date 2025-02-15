@@ -440,28 +440,32 @@ const Auth = () => {
   }, [user, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#D7D3BF] to-[#D7D3BF] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-200 flex items-center justify-center p-4">
       <Toaster position="top-right" />
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
         
-        {/* Left Side - Image Section */}
-        <div className="hidden md:block md:w-1/2 relative">
-          <img
-            src="src/assets/login22.jpg"
-            alt="Luxury Villa"
-            className="h-full w-full object-cover"
-          />
-          <div className="absolute inset-0 flex flex-col justify-center px-12 text-white bg-black/30">
-            <h2 className="text-4xl font-bold mb-6">
-              {isRegister ? "Start Your Journey" : "Welcome Back"}
-            </h2>
-            <p className="text-lg opacity-90">
-              {isRegister
-                ? "Create your account and join our community today."
-                : "Sign in to access your personalized experience."}
-            </p>
-          </div>
-        </div>
+{/* Left Side - Video Section */}
+<div className="hidden md:block md:w-1/2 relative">
+  <video
+    src="src/components/login/13135530_1920_1080_30fps.mp4"  // Replace with your video file path
+    alt="Luxury Villa"
+    className="h-full w-full object-cover"
+    autoPlay
+    loop
+    muted
+  />
+  <div className="absolute inset-0 flex flex-col justify-center px-12 text-white bg-black/30">
+    <h2 className="text-4xl font-bold mb-6">
+      {isRegister ? "Start Your Journey" : "Welcome Back"}
+    </h2>
+    <p className="text-lg opacity-90">
+      {isRegister
+        ? "Create your account and join our community today."
+        : "Sign in to access your personalized experience."}
+    </p>
+  </div>
+</div>
+
 
         {/* Right Side - Form Section */}
         <div className="w-full md:w-1/2 p-8 md:p-12">
