@@ -1,11 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaArrowRight, FaCalendarAlt, FaUser, FaUserFriends } from "react-icons/fa";
+import { ref, onValue } from "firebase/database";
+import { database } from "../../../fireBaseConfig";
 
-const defaultBookingIcon = "https://via.placeholder.com/100?text=Booking";
+const defaultBookingIcon = "https://random.imagecdn.app/500/150";
 
 export default function BookingDetailsModal({ booking, onClose, onForward }) {
   const [isExiting, setIsExiting] = useState(false);
+  const [propertyPhoto, setPropertyPhoto] = useState(null);
   const modalRef = useRef(null);
+
+  // Fetch property photo from Firebase using booking.productId.
+  useEffect(() => {
+    if (booking && booking.productId) {
+      const productRef = ref(database, `products/${booking.productId}`);
+      const unsubscribe = onValue(productRef, (snapshot) => {
+        const productData = snapshot.val();
+        if (productData && productData.photos && productData.photos.length > 0) {
+          setPropertyPhoto(productData.photos[0]);
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [booking]);
 
   useEffect(() => {
     if (modalRef.current) {
@@ -44,7 +61,7 @@ export default function BookingDetailsModal({ booking, onClose, onForward }) {
         <div className="absolute top-5 right-5 flex gap-3">
           <button
             onClick={goForward}
-            className="p-2 text-emerald-600 hover:text-emerald-800 transition-all hover:scale-110 active:scale-95"
+            className="p-2 text-[#A59D84] hover:text-[#543A14] transition-all hover:scale-110 active:scale-95"
           >
             <FaArrowRight size={20} />
           </button>
@@ -60,7 +77,7 @@ export default function BookingDetailsModal({ booking, onClose, onForward }) {
         <div className="flex flex-col items-center mt-4">
           <div className="relative group">
             <img
-              src={booking.image || defaultBookingIcon}
+              src={booking.image || propertyPhoto || defaultBookingIcon}
               alt="Booking"
               className="w-32 h-32 rounded-2xl border-4 border-white shadow-xl object-cover transition-transform duration-300 group-hover:rotate-2"
             />
@@ -69,8 +86,8 @@ export default function BookingDetailsModal({ booking, onClose, onForward }) {
               {booking.status}
             </div>
           </div>
-          <h2 className="mt-6 text-2xl font-bold text-gray-900 bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-            Booking #{booking.id}
+          <h2 className="mt-6 text-2xl font-bold text-[#A59D84]">
+            Booking <small>#{booking.id}</small>
           </h2>
         </div>
 
@@ -79,10 +96,10 @@ export default function BookingDetailsModal({ booking, onClose, onForward }) {
           {/* Guest Info */}
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
             <div className="p-3 bg-white rounded-lg shadow-sm">
-              <FaUser className="text-emerald-600" size={18} />
+              <FaUser className="text-[#A59D84]" size={18} />
             </div>
             <div>
-              <p className="text-sm text-gray-500">Guest Name</p>
+              <p className="text-sm text-[#543A14]">Guest Name</p>
               <p className="font-medium text-gray-900">{booking.fullName}</p>
             </div>
           </div>
@@ -91,7 +108,7 @@ export default function BookingDetailsModal({ booking, onClose, onForward }) {
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
               <div className="p-3 bg-white rounded-lg shadow-sm">
-                <FaCalendarAlt className="text-emerald-600" size={18} />
+                <FaCalendarAlt className="text-[#A59D84]" size={18} />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Check-in</p>
@@ -100,7 +117,7 @@ export default function BookingDetailsModal({ booking, onClose, onForward }) {
             </div>
             <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
               <div className="p-3 bg-white rounded-lg shadow-sm">
-                <FaCalendarAlt className="text-emerald-600" size={18} />
+                <FaCalendarAlt className="text-[#A59D84]" size={18} />
               </div>
               <div>
                 <p className="text-sm text-gray-500">Check-out</p>
@@ -112,7 +129,7 @@ export default function BookingDetailsModal({ booking, onClose, onForward }) {
           {/* Guest Count */}
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
             <div className="p-3 bg-white rounded-lg shadow-sm">
-              <FaUserFriends className="text-emerald-600" size={18} />
+              <FaUserFriends className="text-[#A59D84]" size={18} />
             </div>
             <div>
               <p className="text-sm text-gray-500">Guests</p>

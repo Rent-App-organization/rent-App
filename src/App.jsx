@@ -13,7 +13,8 @@ import {
   About,
   Contact,
   PageNotFound,
-  SellerObjection
+  BecomeOwnerProfile,
+
 } from "./components";
 function App() {
 
@@ -68,8 +69,8 @@ function App() {
       element: <Contact />,
     },
     {
-      path: '/SellerObjection',
-      element: <SellerObjection />,
+      path: '/BecomeOwnerProfile',
+      element: <BecomeOwnerProfile />,
     },
   ])
 

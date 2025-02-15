@@ -3,7 +3,7 @@ import { MapPin, DollarSign, BedDouble, Bath } from 'lucide-react';
 import axios from "axios";
 
 const firebaseUrl =
-  "https://rental-website-bb300-default-rtdb.firebaseio.com/products.json";
+  "https://testrent-b52c9-default-rtdb.firebaseio.com/products.json";
 
 export default function NewRentals() {
   const [rentals, setRentals] = useState([]);

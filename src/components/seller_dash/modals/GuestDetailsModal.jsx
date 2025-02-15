@@ -1,11 +1,53 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaTimes, FaArrowLeft, FaEnvelope, FaPhone } from "react-icons/fa";
+import { ref, onValue } from "firebase/database";
+import { database } from "../../../fireBaseConfig";
 
-const defaultAvatar = "https://via.placeholder.com/100?text=Guest+Avatar";
+const defaultAvatar = "https://random.imagecdn.app/500/150";
 
-export default function GuestDetailsModal({ guest, onCloseAll, onBack }) {
+export default function GuestDetailsModal({ guest, booking, propertyPhoto: propPhoto, onCloseAll, onBack }) {
   const [isExiting, setIsExiting] = useState(false);
+  const [propertyPhoto, setPropertyPhoto] = useState(propPhoto || null);
+  const [userData, setUserData] = useState({ email: "", avatar: "", phone: "" });
   const modalRef = useRef(null);
+
+  // Fetch property photo if not provided.
+  useEffect(() => {
+    if (!propertyPhoto && booking?.productId) {
+      const productRef = ref(database, `products/${booking.productId}`);
+      console.log("Fetching product photo from:", `products/${booking.productId}`);
+      const unsubscribe = onValue(productRef, (snapshot) => {
+        const productData = snapshot.val();
+        console.log("Fetched product data:", productData);
+        if (productData && productData.photos && productData.photos.length > 0) {
+          setPropertyPhoto(productData.photos[0]);
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, [booking, propertyPhoto]);
+
+  // Fetch guest user data using booking.userId.
+  useEffect(() => {
+    if (booking?.userId) {
+      const userRef = ref(database, `users/${booking.userId}`);
+      console.log("Fetching user data from:", `users/${booking.userId}`);
+      const unsubscribe = onValue(userRef, (snapshot) => {
+        const data = snapshot.val();
+        console.log("Fetched user data:", data);
+        if (data) {
+          setUserData({
+            email: data.email || "",
+            avatar: data.profileImage || "",
+            phone: data.phone || ""
+          });
+        }
+      });
+      return () => unsubscribe();
+    } else {
+      console.log("No booking.userId provided.");
+    }
+  }, [booking?.userId]);
 
   useEffect(() => {
     if (modalRef.current) {
@@ -26,7 +68,10 @@ export default function GuestDetailsModal({ guest, onCloseAll, onBack }) {
     setTimeout(() => onCloseAll?.(), 300);
   };
 
-  const { name, email, phone, avatar } = guest;
+  // Use guest prop first, then fallback to fetched userData.
+  const displayEmail = guest.email || userData.email || "Not provided";
+  const displayAvatar = guest.avatar || userData.avatar || defaultAvatar;
+  const displayPhone = guest.phone || userData.phone || "Not provided";
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-gray-900/50 backdrop-blur-sm">
@@ -43,14 +88,14 @@ export default function GuestDetailsModal({ guest, onCloseAll, onBack }) {
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={handleBack}
-            className="p-2 text-emerald-600 hover:text-emerald-800 hover:bg-emerald-50 rounded-lg transition-all"
+            className="p-2 text-[#A59D84] hover:text-[#543A14] hover:bg-[#ECEBDE] rounded-lg transition-all"
             title="Back to Booking"
           >
             <FaArrowLeft size={20} />
           </button>
           <button
             onClick={handleCloseAll}
-            className="p-2 text-gray-400 hover:text-red-600 hover:bg-gray-50 rounded-lg transition-all"
+            className="p-2 text-gray-400 hover:text-[#A59D84] hover:bg-gray-50 rounded-lg transition-all"
             title="Close"
           >
             <FaTimes size={20} />
@@ -61,14 +106,14 @@ export default function GuestDetailsModal({ guest, onCloseAll, onBack }) {
         <div className="flex flex-col items-center">
           <div className="relative group">
             <img
-              src={avatar || defaultAvatar}
-              alt="Guest Avatar"
+              src={displayAvatar || defaultAvatar}
+              alt="Property"
               className="w-28 h-28 rounded-full border-4 border-white shadow-xl object-cover transition-transform duration-300 group-hover:rotate-2 group-hover:scale-105"
             />
-            <div className="absolute inset-0 rounded-full border-2 border-emerald-100/50 pointer-events-none" />
+            <div className="absolute inset-0 rounded-full border-2 border-[#ECEBDE] pointer-events-none" />
           </div>
-          <h2 className="mt-4 text-2xl font-bold text-gray-900 bg-gradient-to-r from-emerald-600 to-blue-600 bg-clip-text text-transparent">
-            {name || "Guest Profile"}
+          <h2 className="mt-4 text-2xl font-bold text-[#A59D84]">
+            {guest.name || "Guest Profile"}
           </h2>
           <p className="text-sm text-gray-500 mt-1">Registered Guest</p>
         </div>
@@ -77,21 +122,21 @@ export default function GuestDetailsModal({ guest, onCloseAll, onBack }) {
         <div className="mt-6 space-y-4">
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
             <div className="p-3 bg-white rounded-lg shadow-sm">
-              <FaEnvelope className="text-emerald-600" size={18} />
+              <FaEnvelope className="text-[#A59D84]" size={18} />
             </div>
             <div>
               <p className="text-sm text-gray-500">Email Address</p>
-              <p className="font-medium text-gray-900 break-all">{email || "Not provided"}</p>
+              <p className="font-medium break-all">{displayEmail}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
             <div className="p-3 bg-white rounded-lg shadow-sm">
-              <FaPhone className="text-emerald-600" size={18} />
+              <FaPhone className="text-[#A59D84]" size={18} />
             </div>
             <div>
               <p className="text-sm text-gray-500">Phone Number</p>
-              <p className="font-medium text-gray-900">{phone || "Not provided"}</p>
+              <p className="font-medium text-gray-900">{displayPhone}</p>
             </div>
           </div>
         </div>

@@ -5,7 +5,7 @@ export default function Managers() {
   const [managers, setManagers] = useState([]);
   const [loading, setLoading] = useState(null);
 
-  const firebaseUrl = "https://rental-website-bb300-default-rtdb.firebaseio.com/users.json";
+  const firebaseUrl = "https://testrent-b52c9-default-rtdb.firebaseio.com/users.json";
 
   // Fetch managers from Firebase
   useEffect(() => {
@@ -32,7 +32,7 @@ export default function Managers() {
 
     try {
       await axios.patch(
-        `https://rental-website-bb300-default-rtdb.firebaseio.com/users/${managerId}.json`,
+        `https://testrent-b52c9-default-rtdb.firebaseio.com/users/${managerId}.json`,
         { status: newStatus, role: newRole }
       );
       setManagers((prevManagers) =>

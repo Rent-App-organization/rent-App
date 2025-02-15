@@ -1,82 +1,67 @@
 import { useState, useEffect } from "react";
-import { ref, onValue, remove } from "firebase/database";
-import { auth, database } from "../../fireBaseConfig.js";
-import Navbar from "../navBar/NavBar";
-import Footer from "../footer/Footer";
+import { database, auth } from "../../fireBaseConfig";
+import { ref, get } from "firebase/database";
 
 const Wishlist = () => {
-  const [properties, setProperties] = useState([]);
-  const user = auth.currentUser; // Get the authenticated user
+  const [wishlistProducts, setWishlistProducts] = useState([]);
 
   useEffect(() => {
-    if (!user) return;
+    const fetchWishlist = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
 
-    const wishlistRef = ref(database, `wishlist/${user.uid}`);
-
-    // Fetch wishlist data
-    onValue(wishlistRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const loadedProperties = Object.keys(data).map((key) => ({
-          id: key,
-          ...data[key],
-        }));
-        setProperties(loadedProperties);
-      } else {
-        setProperties([]);
+      const wishlistRef = ref(database, `wishlist/${user.uid}`);
+      try {
+        const snapshot = await get(wishlistRef);
+        if (snapshot.exists()) {
+          const wishlistData = snapshot.val();
+          const itemIds = Object.keys(wishlistData); // Extract wishlist item IDs
+          fetchProductDetails(itemIds); // Fetch product details
+        } else {
+          setWishlistProducts([]);
+        }
+      } catch (error) {
+        console.error("Error fetching wishlist:", error);
       }
-    });
-  }, [user]);
+    };
 
-  const removeProperty = (propertyId) => {
-    if (!user) return;
-    const propertyRef = ref(database, `wishlist/${user.uid}/${propertyId}`);
-    remove(propertyRef)
-      .then(() => {
-        setProperties(properties.filter((property) => property.id !== propertyId));
-      })
-      .catch((error) => console.error("Error removing property:", error));
-  };
+    const fetchProductDetails = async (itemIds) => {
+      try {
+        const productPromises = itemIds.map(async (id) => {
+          const productRef = ref(database, `products/${id}`);
+          const productSnapshot = await get(productRef);
+          return productSnapshot.exists() ? { id, ...productSnapshot.val() } : null;
+        });
+
+        const products = await Promise.all(productPromises);
+        setWishlistProducts(products.filter((product) => product !== null)); // Filter out null values
+      } catch (error) {
+        console.error("Error fetching product details:", error);
+      }
+    };
+
+    fetchWishlist();
+  }, []);
 
   return (
-    <div className="bg-blue-50">
-      <Navbar />
-      <div className="min-h-screen flex flex-col items-center py-20 px-5">
-        <div className="w-full max-w-6xl space-y-8">
-          <h2 className="text-3xl font-bold text-blue-800 text-center mt-8 mb-6">
-            Your Favorite Properties
-          </h2>
-
-          <div className="grid md:grid-cols-3 sm:grid-cols-1 gap-6 mx-auto">
-            {properties.length > 0 ? (
-              properties.map((property) => (
-                <div key={property.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <img src={property.image} alt={property.name} className="w-full h-52 object-cover" />
-                  <div className="p-5">
-                    <h3 className="text-lg font-bold text-gray-800">{property.name}</h3>
-                    <p className="text-gray-600">{property.description}</p>
-                    <span className="block text-blue-600 font-semibold text-lg mt-2">{property.price}</span>
-                    <div className="flex justify-between mt-4">
-                      <button
-                        onClick={() => removeProperty(property.id)}
-                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition"
-                      >
-                        Remove
-                      </button>
-                      <button className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-                        Booking Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-center text-lg">No properties in your wishlist.</p>
-            )}
-          </div>
-        </div>
-      </div>
-      <Footer />
+    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4">Wishlist Products</h2>
+      {wishlistProducts.length > 0 ? (
+        <ul className="space-y-4">
+          {wishlistProducts.map((product) => (
+            <li
+              key={product.id}
+              className="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition"
+            >
+              <h3 className="text-xl font-semibold text-blue-600">{product.location}</h3>
+              <p className="text-gray-600 mt-1">{product.description}</p>
+              <p className="text-lg font-bold text-green-600 mt-2">Price: ${product.price}</p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-gray-500 text-center mt-4">No items in wishlist</p>
+      )}
     </div>
   );
 };
