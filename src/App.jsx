@@ -12,7 +12,9 @@ import {
   UserProfile,
   About,
   Contact,
-  PageNotFound
+  PageNotFound,
+  BecomeOwnerProfile,
+
 } from "./components";
 function App() {
 
@@ -65,6 +67,10 @@ function App() {
     {
       path: '/support',
       element: <Contact />,
+    },
+    {
+      path: '/BecomeOwnerProfile',
+      element: <BecomeOwnerProfile />,
     },
   ])
 

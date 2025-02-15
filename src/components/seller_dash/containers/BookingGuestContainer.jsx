@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { ref, onValue } from "firebase/database";
+import { database } from "../../fireBaseConfig";
 import BookingDetailsModal from "../modals/BookingDetailsModal";
 import GuestDetailsModal from "../modals/GuestDetailsModal";
 
-// Replace this with your real data-fetching logic (e.g., using Firebase onValue)
 export default function BookingGuestContainer({ bookingId }) {
   const [bookingData, setBookingData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -10,23 +11,13 @@ export default function BookingGuestContainer({ bookingId }) {
   const [showGuestModal, setShowGuestModal] = useState(false);
 
   useEffect(() => {
-    // Simulated data fetch: Replace with your actual Firebase subscription
-    setTimeout(() => {
-      // For example, your real data from Firebase might be:
-      const fetchedData = {
-        id: bookingId,
-        fullName: "takrezzzzzzzzzffffffffffffffffff",
-        guestEmail: "alice@example.com",
-        phoneNumber: "0798837302",
-        status: "approved",
-        startDate: "2025-02-14",
-        endDate: "2025-02-27",
-        numGuests: "10",
-        // Add any additional fields as needed
-      };
-      setBookingData(fetchedData);
+    const bookingRef = ref(database, `formData/${bookingId}`);
+    const unsubscribe = onValue(bookingRef, (snapshot) => {
+      const data = snapshot.val();
+      setBookingData(data);
       setLoading(false);
-    }, 1000);
+    });
+    return () => unsubscribe();
   }, [bookingId]);
 
   const openGuestModal = () => {
@@ -36,10 +27,6 @@ export default function BookingGuestContainer({ bookingId }) {
 
   const closeAll = () => {
     setShowBookingModal(false);
-    setShowGuestModal(false);
-  };
-
-  const closeGuest = () => {
     setShowGuestModal(false);
   };
 
@@ -53,7 +40,7 @@ export default function BookingGuestContainer({ bookingId }) {
     <>
       {showBookingModal && bookingData && (
         <BookingDetailsModal
-          booking={bookingData}
+          booking={{ ...bookingData, id: bookingId }} // include bookingId in the object
           onExitComplete={openGuestModal}
           onClose={closeAll}
         />
@@ -66,8 +53,12 @@ export default function BookingGuestContainer({ bookingId }) {
             phone: bookingData.phoneNumber,
             avatar: bookingData.guestAvatar,
           }}
-          onClose={closeGuest}
-          onCloseAll={closeAll}
+          booking={{ ...bookingData, id: bookingId }}
+          onClose={closeAll}
+          onBack={() => {
+            setShowGuestModal(false);
+            setShowBookingModal(true);
+          }}
         />
       )}
     </>

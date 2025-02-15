@@ -1,12 +1,23 @@
 import React, { useState } from "react";
-import { FaClipboardList, FaCheck, FaTimes, FaFilter, FaRegCalendarTimes } from "react-icons/fa";
+import { 
+  FaClipboardList, 
+  FaCheck, 
+  FaTimes, 
+  FaFilter, 
+  FaRegCalendarTimes 
+} from "react-icons/fa";
 import BookingWizard from "../modals/BookingWizard";
 
 export default function BookingsSection({ bookings, properties, onBookingAction }) {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showWizard, setShowWizard] = useState(false);
+  
+  // Default the status filter to "pending"
   const [propertyFilter, setPropertyFilter] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("pending");
+
+  // Number of bookings to display initially
+  const [visibleCount, setVisibleCount] = useState(5);
 
   const handleRowClick = (booking) => {
     setSelectedBooking(booking);
@@ -23,11 +34,15 @@ export default function BookingsSection({ bookings, properties, onBookingAction 
     return prop ? prop.title : "Unknown Property";
   };
 
+  // Filter bookings based on property and status filters.
   const filteredBookings = bookings.filter((b) => {
     const matchProperty = !propertyFilter || b.productId === propertyFilter;
     const matchStatus = !statusFilter || b.status.toLowerCase() === statusFilter.toLowerCase();
     return matchProperty && matchStatus;
   });
+
+  // Only show a subset initially.
+  const displayedBookings = filteredBookings.slice(0, visibleCount);
 
   const statusStyles = {
     pending: "bg-orange-200 text-orange-800",
@@ -35,8 +50,12 @@ export default function BookingsSection({ bookings, properties, onBookingAction 
     declined: "bg-red-200 text-red-800"
   };
 
+  const handleViewMore = () => {
+    setVisibleCount(visibleCount + 5);
+  };
+
   return (
-    <section className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+    <section className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden container mx-auto px-4 py-8">
       {/* Header */}
       <div className="bg-gradient-to-r from-[#ECEBDE] to-[#D7D3BF] px-6 py-5 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -67,7 +86,9 @@ export default function BookingsSection({ bookings, properties, onBookingAction 
             >
               <option value="">All Properties</option>
               {properties.map((prop) => (
-                <option key={prop.id} value={prop.id}>{prop.title}</option>
+                <option key={prop.id} value={prop.id}>
+                  {prop.title}
+                </option>
               ))}
             </select>
           </div>
@@ -77,7 +98,6 @@ export default function BookingsSection({ bookings, properties, onBookingAction 
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
             >
-              <option value="">All Statuses</option>
               <option value="pending">Pending</option>
               <option value="approved">Approved</option>
               <option value="declined">Declined</option>
@@ -98,7 +118,7 @@ export default function BookingsSection({ bookings, properties, onBookingAction 
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {filteredBookings.map((b) => (
+            {displayedBookings.map((b) => (
               <tr
                 key={b.id}
                 className="hover:bg-gray-100 transition-colors cursor-pointer"
@@ -136,20 +156,21 @@ export default function BookingsSection({ bookings, properties, onBookingAction 
                 </td>
               </tr>
             ))}
-            {filteredBookings.length === 0 && (
-              <tr>
-                <td colSpan={4} className="px-6 py-12 text-center">
-                  <div className="inline-flex flex-col items-center">
-                    <FaRegCalendarTimes className="w-12 h-12 text-gray-400 mb-4" />
-                    <p className="text-gray-500 font-medium">No bookings match your filters</p>
-                    <p className="text-sm text-gray-400 mt-1">Try adjusting your filter criteria</p>
-                  </div>
-                </td>
-              </tr>
-            )}
           </tbody>
         </table>
       </div>
+
+      {/* View More Button */}
+      {filteredBookings.length > visibleCount && (
+        <div className="flex justify-center py-4">
+          <button 
+            onClick={handleViewMore}
+            className="px-6 py-2 bg-[#A59D84] text-white rounded-md hover:bg-[#543A14] transition-colors"
+          >
+            View More
+          </button>
+        </div>
+      )}
 
       {/* Booking Wizard Modal */}
       {showWizard && selectedBooking && (
