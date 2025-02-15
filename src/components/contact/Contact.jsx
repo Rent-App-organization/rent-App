@@ -1,5 +1,3 @@
-
-
 import { useState } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { database } from "/src/firebaseConfig";

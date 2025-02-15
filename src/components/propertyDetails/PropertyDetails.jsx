@@ -738,7 +738,7 @@ const PropertyDetails = () => {
           startDate={selectedRange[0]} 
           endDate={selectedRange[1]} 
           productId={id} 
-          price={property?.price}
+          totalPrice={calculateFullTotal()}
         />
       )}
       <Footer />
