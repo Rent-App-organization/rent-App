@@ -563,6 +563,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserData, logoutUser, fetchUserNotifications } from "../../redux/authSlice";
 
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
@@ -622,6 +623,8 @@ const Navbar = () => {
   };
 
   const navItems = getNavItems();
+
+  
 
   return (
     <nav className="backdrop-blur-md bg-white/95 sticky top-0 z-50 border-b border-gray-100 shadow-sm">
