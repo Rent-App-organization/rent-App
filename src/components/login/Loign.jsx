@@ -51,17 +51,17 @@
 //         return false;
 //       }
 //     }
-    
+
 //     if (!patterns.email.test(formData.email)) {
 //       toast.error("Please enter a valid email address");
 //       return false;
 //     }
-    
+
 //     if (!patterns.password.test(formData.password)) {
 //       toast.error("Password must contain at least 8 characters, including uppercase, lowercase, number and special character");
 //       return false;
 //     }
-    
+
 //     return true;
 //   };
 
@@ -126,7 +126,7 @@
 //     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
 //       <Toaster position="top-right" />
 //       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
-        
+
 //         {/* Left Side - Image Section */}
 //         <div className="hidden md:block md:w-1/2 relative">
 //           <img
@@ -326,8 +326,8 @@
 // export default Auth;
 
 
-import React, { useState ,useEffect  } from "react";
-import { useDispatch, useSelector } from 'react-redux'; 
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   registerUser,
@@ -353,7 +353,7 @@ const Auth = () => {
     phone: "",
     password: "",
     confirmPassword: "",
-    role: "user", 
+    role: "user",
   });
 
   // Regex patterns
@@ -378,17 +378,17 @@ const Auth = () => {
         return false;
       }
     }
-    
+
     if (!patterns.email.test(formData.email)) {
       toast.error("Please enter a valid email address");
       return false;
     }
-    
+
     if (!patterns.password.test(formData.password)) {
       toast.error("Password must contain at least 8 characters, including uppercase, lowercase, number and special character");
       return false;
     }
-    
+
     return true;
   };
 
@@ -443,28 +443,28 @@ const Auth = () => {
     <div className="min-h-screen bg-gray-200 flex items-center justify-center p-4">
       <Toaster position="top-right" />
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
-        
-{/* Left Side - Video Section */}
-<div className="hidden md:block md:w-1/2 relative">
-  <video
-    src="src/components/login/13135530_1920_1080_30fps.mp4"  // Replace with your video file path
-    alt="Luxury Villa"
-    className="h-full w-full object-cover"
-    autoPlay
-    loop
-    muted
-  />
-  <div className="absolute inset-0 flex flex-col justify-center px-12 text-white bg-black/30">
-    <h2 className="text-4xl font-bold mb-6">
-      {isRegister ? "Start Your Journey" : "Welcome Back"}
-    </h2>
-    <p className="text-lg opacity-90">
-      {isRegister
-        ? "Create your account and join our community today."
-        : "Sign in to access your personalized experience."}
-    </p>
-  </div>
-</div>
+
+        {/* Left Side - Video Section */}
+        <div className="hidden md:block md:w-1/2 relative">
+          <video
+            src="src/components/login/13135530_1920_1080_30fps.mp4"  // Replace with your video file path
+            alt="Luxury Villa"
+            className="h-full w-full object-cover"
+            autoPlay
+            loop
+            muted
+          />
+          <div className="absolute inset-0 flex flex-col justify-center px-12 text-white bg-black/30">
+            <h2 className="text-4xl font-bold mb-6">
+              {isRegister ? "Start Your Journey" : "Welcome Back"}
+            </h2>
+            <p className="text-lg opacity-90">
+              {isRegister
+                ? "Create your account and join our community today."
+                : "Sign in to access your personalized experience."}
+            </p>
+          </div>
+        </div>
 
 
         {/* Right Side - Form Section */}
@@ -475,7 +475,7 @@ const Auth = () => {
                 {isRegister ? "Create Account" : "Sign In"}
               </h3>
               <p className="text-gray-600">
-                {isRegister 
+                {isRegister
                   ? "Fill in your details to get started"
                   : "Enter your credentials to continue"}
               </p>
@@ -486,9 +486,9 @@ const Auth = () => {
               onClick={handleGoogleSignIn}
               className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-300"
             >
-              <img 
-                src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png" 
-                alt="Google" 
+              <img
+                src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
+                alt="Google"
                 className="w-6 h-6"
               />
               {loading ? "Loading..." : "Continue with Google"}
@@ -542,7 +542,7 @@ const Auth = () => {
                           type="text"
                           required
                           className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#D7D3BF] focus:border-transparent transition-all duration-300"
-                          placeholder="John Doe"
+                          placeholder="Enter your name"
                           value={formData.fullName}
                           onChange={handleChange}
                         />
@@ -558,7 +558,7 @@ const Auth = () => {
                           type="tel"
                           required
                           className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#D7D3BF] focus:border-transparent transition-all duration-300"
-                          placeholder="(123) 456-7890"
+                          placeholder="+96200 0000 000"
                           value={formData.phone}
                           onChange={handleChange}
                         />
@@ -592,7 +592,7 @@ const Auth = () => {
                       type="password"
                       required
                       className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#D7D3BF] focus:border-transparent transition-all duration-300"
-                      placeholder="••••••••"
+                      placeholder="Enter your password"
                       value={formData.password}
                       onChange={handleChange}
                     />
@@ -609,7 +609,7 @@ const Auth = () => {
                         type="password"
                         required
                         className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#D7D3BF] focus:border-transparent transition-all duration-300"
-                        placeholder="••••••••"
+                        placeholder="Repeat password"
                         value={formData.confirmPassword}
                         onChange={handleChange}
                       />
