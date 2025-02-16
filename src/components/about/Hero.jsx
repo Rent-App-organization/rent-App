@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 
-
 function Hero() {
     return (
         <section className="min-h-screen bg-white flex items-center justify-center">
@@ -20,13 +19,16 @@ function Hero() {
                     </button>
                 </motion.div>
 
-                <motion.img
-                    src="src/components/about/lily-tran-0bESYmQLn5M-unsplash.jpg"
-                    alt="To-Do List Visual"
+                <motion.video
+                    src="src/components/login/13135530_1920_1080_30fps.mp4"  // Replace with the actual video source
+                    alt="Luxury Villa Video"
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8 }}
-                    className="w-150 h-150 rounded-2xl shadow-lg -mt-15"
+                    className="w-full h-full object-cover rounded-2xl shadow-lg -mt-15"
+                    autoPlay
+                    loop
+                    muted
                 />
             </div>
         </section>
