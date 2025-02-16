@@ -45,70 +45,70 @@ export default function StatisticsSection() {
       {/* Grid of stats cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {/* Total Managers */}
-        <div className="flex items-center p-4 bg-indigo-50 rounded-lg shadow-sm">
-          <div className="p-3 bg-indigo-100 rounded-full text-indigo-700 mr-3">
+        <div className="flex items-center p-4 bg-[#ECEBDE] rounded-lg shadow-sm">
+          <div className="p-3 bg-white rounded-full text-black mr-3">
             <FaUserTie size={20} />
           </div>
           <div>
             <p className="text-sm text-gray-600">Total Managers</p>
-            <p className="text-xl font-bold text-indigo-800">{totalManagers}</p>
+            <p className="text-xl font-bold text-black">{totalManagers}</p>
           </div>
         </div>
 
         {/* Approved Managers */}
-        <div className="flex items-center p-4 bg-green-50 rounded-lg shadow-sm">
-          <div className="p-3 bg-green-100 rounded-full text-green-700 mr-3">
+        <div className="flex items-center p-4 bg-[#ECEBDE] rounded-lg shadow-sm">
+          <div className="p-3 bg-white rounded-full text-black mr-3">
             <FaCheckCircle size={20} />
           </div>
           <div>
             <p className="text-sm text-gray-600">Approved Managers</p>
-            <p className="text-xl font-bold text-green-800">{approvedManagers}</p>
+            <p className="text-xl font-bold text-black">{approvedManagers}</p>
           </div>
         </div>
 
         {/* Rejected Managers */}
-        <div className="flex items-center p-4 bg-red-50 rounded-lg shadow-sm">
-          <div className="p-3 bg-red-100 rounded-full text-red-700 mr-3">
+        <div className="flex items-center p-4 bg-[#ECEBDE] rounded-lg shadow-sm">
+          <div className="p-3 bg-white rounded-full text-black mr-3">
             <FaTimesCircle size={20} />
           </div>
           <div>
             <p className="text-sm text-gray-600">Rejected Managers</p>
-            <p className="text-xl font-bold text-red-800">{rejectedManagers}</p>
+            <p className="text-xl font-bold text-black">{rejectedManagers}</p>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
         {/* Total Listings */}
-        <div className="flex items-center p-4 bg-indigo-50 rounded-lg shadow-sm">
-          <div className="p-3 bg-indigo-100 rounded-full text-indigo-700 mr-3">
+        <div className="flex items-center p-4 bg-[#D7D3BF] rounded-lg shadow-sm">
+          <div className="p-3 bg-white rounded-full text-black mr-3">
             <FaBuilding size={20} />
           </div>
           <div>
             <p className="text-sm text-gray-600">Total Listings</p>
-            <p className="text-xl font-bold text-indigo-800">{totalListings}</p>
+            <p className="text-xl font-bold text-black">{totalListings}</p>
           </div>
         </div>
 
         {/* Approved Listings */}
-        <div className="flex items-center p-4 bg-green-50 rounded-lg shadow-sm">
-          <div className="p-3 bg-green-100 rounded-full text-green-700 mr-3">
+        <div className="flex items-center p-4 bg-[#D7D3BF] rounded-lg shadow-sm">
+          <div className="p-3 bg-white rounded-full text-black mr-3">
             <FaCheckCircle size={20} />
           </div>
           <div>
             <p className="text-sm text-gray-600">Approved Listings</p>
-            <p className="text-xl font-bold text-green-800">{approvedListings}</p>
+            <p className="text-xl font-bold text-black">{approvedListings}</p>
           </div>
         </div>
 
         {/* Rejected Listings */}
-        <div className="flex items-center p-4 bg-red-50 rounded-lg shadow-sm">
-          <div className="p-3 bg-red-100 rounded-full text-red-700 mr-3">
+        <div className="flex items-center p-4 bg-[#D7D3BF] rounded-lg shadow-sm">
+          <div className="p-3 bg-white rounded-full text-black mr-3">
             <FaTimesCircle size={20} />
           </div>
           <div>
             <p className="text-sm text-gray-600">Rejected Listings</p>
-            <p className="text-xl font-bold text-red-800">{rejectedListings}</p>
+            <p className="text-xl font-bold text-black">{rejectedListings}</p>
           </div>
         </div>
       </div>

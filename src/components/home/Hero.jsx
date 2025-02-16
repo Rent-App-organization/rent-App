@@ -1,75 +1,73 @@
-import { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import { useEffect, useRef } from "react";
 import "./home.css";
-import { Link } from 'react-router-dom';
+import { FaSearch } from "react-icons/fa";
+
 
 function Hero() {
 
 
-//// To play video from 9 second //////
-const videoRef = useRef(null);
+  //// To play video from 5 second //////
+  const videoRef = useRef(null);
 
-useEffect(() => {
-  const video = videoRef.current;
-  if (video) {
-    video.onloadedmetadata = () => {
-      video.currentTime = 5; // Start from 5 seconds
-    };
-  }
-}, []);
-/////////////////////////
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.onloadedmetadata = () => {
+        video.currentTime = 5; // Start from 5 seconds
+      };
+    }
+  }, []);
+  /////////////////////////
 
 
   return (
-   <>
-   {/* Hero Section with Video Background */}
+    <>
+      {/* Hero Section with Video Background */}
 
-   <div className="relative h-screen flex flex-col items-center justify-center text-center text-white">
+      <div className="relative h-screen flex flex-col items-center justify-center text-center text-white">
         {/* Background video*/}
         <div className="video-docker absolute top-0 left-0 w-full h-full overflow-hidden">
           <video
             ref={videoRef}
-            className="min-w-full min-h-full absolute object-cover"
+            className="min-w-full min-h-full absolute object-cover "
             src="src/assets/hero.mp4"
             type="video/mp4"
             autoPlay
             muted
             loop
           />
+          
         </div>
 
 
         {/* Content */}
         <div className="relative z-10">
-          <h1 className="text-5xl md:text-6xl font-bold">
-            Escape to the <span className="italic">Horizon Villas</span>
+          <h1 className="text-5xl md:text-6xl font-bold ">
+            Escape to the <span className="">Horizon Villas</span>
           </h1>
           <p className="mt-4 text-lg md:text-xl">
             Take your pick of the world’s finest villas – we’ll handle the rest.
           </p>
 
           {/* Search bar */}
-          <div className="mt-6 text-white rounded-lg shadow-lg p-3 flex items-center gap-2 w-200 relative">
+          <div className=" rounded-full p-2 flex mt-8 shadow-lg w-200 border-1 border-white ">
             <input
               type="text"
-              placeholder="Search..."
-              className="p-2 border rounded-md flex-grow text-white bg-transparent pr-10"
+              placeholder="Search ...."
+              className="flex-1 px-4 py-2  outline-none text-white rounded-l-full"
+
             />
-            <svg
-              className="absolute right-4 w-5 h-5 text-white transition-colors duration-200"
-              viewBox="0 0 512 512"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" />
-            </svg>
+            <button className="bg-[#A59D84] text-white px-6 py-2 rounded-full flex items-center">
+              <FaSearch className="mr-2" />
+              Search
+            </button>
           </div>
 
 
 
         </div>
       </div>
-   </> 
+    </>
   )
 }
 

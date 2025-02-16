@@ -4,16 +4,16 @@ import {
   FaHome,
   FaTachometerAlt,
   FaUserTie,
-  FaCog,
   FaTimes,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
+
 
 export default function Sidebar({ isSidebarOpen, toggleSidebar }) {
   const menuItems = [
-    { icon: <FaTachometerAlt />, label: "Dashboard" },
-    { icon: <FaUserTie />, label: "Users" },
-    { icon: <FaHome />, label: "Home" },
-    { icon: <FaCog />, label: "Settings" },
+    { icon: <FaTachometerAlt />, label: "Dashboard", path: "/adminDash" },
+    { icon: <FaUserTie />, label: "Deposit Requests" , path: "/sellerObjection"  },
+    { icon: <FaHome />, label: "Home" , path: "/"},
   ];
 
   return (
@@ -49,8 +49,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar }) {
         <ul className="space-y-1">
           {menuItems.map((item) => (
             <li key={item.label}>
-              <a
-                href="#!"
+              <Link to ={item.path}
                 className="flex items-center px-3 py-2 sm:px-4 sm:py-3 rounded-lg text-black hover:bg-[#A59D84] transition-all duration-300 group"
               >
                 <span className="text-lg text-[#A59D84] group-hover:text-black mr-3">
@@ -59,7 +58,7 @@ export default function Sidebar({ isSidebarOpen, toggleSidebar }) {
                 <span className="text-sm sm:text-base font-medium group-hover:text-black">
                   {item.label}
                 </span>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
