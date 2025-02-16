@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import image from './assets/2fe16dcc-3407-4f37-b335-8debf256417f.webp';
+
 
 function Hero() {
     return (
@@ -21,7 +21,7 @@ function Hero() {
                 </motion.div>
 
                 <motion.img
-                    src={image}
+                    src="src/components/about/lily-tran-0bESYmQLn5M-unsplash.jpg"
                     alt="To-Do List Visual"
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
