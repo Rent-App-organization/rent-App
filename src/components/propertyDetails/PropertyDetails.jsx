@@ -386,7 +386,7 @@ const PropertyDetails = () => {
                       <div className="mt-4 mb-6">
                         <div className="flex justify-between items-center mb-2">
                           <span>
-                            ${property.price} ×{" "}
+                            JD{property.price} ×{" "}
                             {Math.round(
                               (selectedRange[1] - selectedRange[0]) /
                                 (1000 * 60 * 60 * 24)

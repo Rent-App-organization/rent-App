@@ -30,7 +30,7 @@ const Rentals = () => {
         );
         const data = response.data;
 
-        if (!data) {
+        if (!data || typeof data !== "object") {
           dispatch(setError("No rentals found."));
           return;
         }
@@ -41,10 +41,18 @@ const Rentals = () => {
           ...rental,
         }));
 
-        // Extract unique categories
-        const uniqueCategories = [...new Set(rentalsArray.map((rental) => rental.category))];
+        // Filter only approved rentals
+        const approvedRentals = rentalsArray.filter((rental) => rental.status === "Approved");
 
-        dispatch(setRentals({ rentals: rentalsArray, categories: uniqueCategories }));
+        if (approvedRentals.length === 0) {
+          dispatch(setError("No approved rentals found."));
+          return;
+        }
+
+        // Extract unique categories from approved rentals
+        const uniqueCategories = [...new Set(approvedRentals.map((rental) => rental.category).filter(Boolean))];
+
+        dispatch(setRentals({ rentals: approvedRentals, categories: uniqueCategories }));
       } catch (error) {
         console.error("Fetch rentals error:", error);
         dispatch(setError("Failed to fetch rentals. Please try again later."));
@@ -163,16 +171,16 @@ const Rentals = () => {
         </div>
 
 
-{/* Call to Action */}
-<div className="text-[#000] py-12 text-center">
-  <h2 className="text-3xl font-bold">Become a Host</h2>
-  <p className="mt-2 text-lg">Earn money by renting out your villa to travelers.</p>
-  <Link to="/BecomeOwnerProfile">
-    <button className="cursor-pointer text-white mt-4 bg-[#A59D84] px-6 py-3 rounded-lg font-bold transition">
-      List Your Villa
-    </button>
-  </Link>
-</div>
+        {/* Call to Action */}
+        <div className="text-[#000] py-12 text-center">
+          <h2 className="text-3xl font-bold">Become a Host</h2>
+          <p className="mt-2 text-lg">Earn money by renting out your villa to travelers.</p>
+          <Link to="/BecomeOwnerProfile">
+            <button className="cursor-pointer text-white mt-4 bg-[#A59D84] px-6 py-3 rounded-lg font-bold transition">
+              List Your Villa
+            </button>
+          </Link>
+        </div>
 
       </div>
       <Footer />

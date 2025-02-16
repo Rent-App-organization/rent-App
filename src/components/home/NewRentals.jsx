@@ -69,7 +69,7 @@ export default function NewRentals() {
                   <p className="text-sm text-gray-500">{rental.location}</p>
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3 group-hover:text-[#A59D84] transition-colors">
                   {rental.title}
                 </h3>
 

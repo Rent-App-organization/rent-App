@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserData, logoutUser, fetchUserNotifications } from "../../redux/authSlice";
+import { FaRegHeart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,6 +13,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const { user, notifications } = useSelector(state => state.auth);
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (user?.uid) {
@@ -36,29 +40,29 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(logoutUser());
     setIsMenuOpen(false);
+    navigate('/')
   };
 
   const getNavItems = () => {
     const baseItems = [
       { name: "Rentals", path: "/Rentals" },
-      { name: "Wishlist", path: "/Wishlist" },
-      { name: "About", path: "/about" },
+      { name: "Our Story", path: "/about" },
       { name: "Support", path: "/support" }
     ];
-    
+
     if (!user) {
       return baseItems;
     }
-    
+
     if (user.role === "admin") {
       return [...baseItems, { name: "Admin Dashboard", path: "/AdminDash" }];
     }
-    
+
     if (user.role === "seller" || user.role === "owner") {
-      return [...baseItems, { name: "Seller Dashboard", path: "/SellerDash" }];
+      return [...baseItems, { name: "Landlord Dashboard", path: "/SellerDash" }];
     }
-    
-    return baseItems; 
+
+    return baseItems;
   };
 
   const navItems = getNavItems();
@@ -67,7 +71,7 @@ const Navbar = () => {
     <nav className="backdrop-blur-md bg-white/95 sticky top-0 z-50 border-b border-gray-100 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16 md:h-20">
-          
+
           {/* Logo Section */}
           <Link to="/" className="relative group flex items-center space-x-3 z-20">
             <div className="bg-[#A59D84] rounded-lg p-2 transition-all duration-300 group-hover:shadow-lg">
@@ -86,17 +90,15 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`relative group py-2 px-1 ${
-                    location.pathname === item.path
-                      ? "text-[#A59D84] font-medium"
-                      : "text-gray-600 hover:text-gray-900"
-                  } transition-colors duration-200`}
+                  className={`relative group py-2 px-1 ${location.pathname === item.path
+                    ? "text-[#A59D84] font-medium"
+                    : "text-gray-600 hover:text-gray-900"
+                    } transition-colors duration-200`}
                 >
                   <span className="relative z-10">{item.name}</span>
-                  <div 
-                    className={`absolute bottom-0 left-0 h-0.5 bg-[#A59D84] transition-all duration-300 ${
-                      location.pathname === item.path ? "w-full" : "w-0 group-hover:w-full"
-                    }`}
+                  <div
+                    className={`absolute bottom-0 left-0 h-0.5 bg-[#A59D84] transition-all duration-300 ${location.pathname === item.path ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
                   ></div>
                 </Link>
               ))}
@@ -105,7 +107,7 @@ const Navbar = () => {
 
           {/* Notifications & User Section */}
           <div className="hidden md:flex items-center space-x-4">
-            
+
             {/* Notifications */}
             {user && (
               <div className="relative" ref={notifRef}>
@@ -154,6 +156,12 @@ const Navbar = () => {
             {/* User Profile & Logout */}
             {user ? (
               <>
+                <Link
+                  to="/Wishlist"
+                  className="px-4 py-2 bg-[#A59D84] text-white rounded-full"
+                >
+                  <FaRegHeart />
+                </Link>
                 <Link
                   to="/UserProfile"
                   className="px-4 py-2 bg-[#A59D84] text-white rounded-full"

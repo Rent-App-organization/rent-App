@@ -10,6 +10,7 @@ import { toast } from "react-hot-toast";
 import { database } from "../../fireBaseConfig";
 import { ref, get, push, set } from "firebase/database";
 import { FaStar, FaRegStar } from 'react-icons/fa';  // استيراد النجوم من Font Awesome
+import Swal from 'sweetalert2';
 
 const UserProfile = () => {
   const dispatch = useDispatch();
@@ -111,7 +112,12 @@ const UserProfile = () => {
   const handleSave = async () => {
     try {
       await dispatch(updateUserData(formData));
-      toast.success("Changes saved successfully");
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: "Changes saved successfully",
+        confirmButtonText: "OK"
+      });
     } catch (error) {
       toast.error("Error saving changes");
     }
@@ -286,57 +292,56 @@ const UserProfile = () => {
       </div>
 
       {isModalOpen && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-w-lg mx-auto">
-      <h3 className="text-lg font-semibold text-gray-900 mb-6">Add Review</h3>
-      
-      {/* عرض النجوم باستخدام Font Awesome */}
-      <div className="flex space-x-2 mb-4">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <span
-            key={star}
-            onClick={() => setRating(star)}
-            className={`cursor-pointer ${
-              star <= rating ? "text-yellow-400" : "text-gray-300"
-            }`}
-            style={{ fontSize: "24px" }}
-          >
-            {star <= rating ? <FaStar /> : <FaRegStar />}
-          </span>
-        ))}
-      </div>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-w-lg mx-auto">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Add Review</h3>
 
-      {/* تعليق المستخدم */}
-      <textarea
-        className="w-full p-2 border border-gray-300 rounded-lg mt-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#A59D84]"
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        placeholder="Enter your comment..."
-        rows="4"
-      />
+            {/* عرض النجوم باستخدام Font Awesome */}
+            <div className="flex space-x-2 mb-4">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <span
+                  key={star}
+                  onClick={() => setRating(star)}
+                  className={`cursor-pointer ${star <= rating ? "text-yellow-400" : "text-gray-300"
+                    }`}
+                  style={{ fontSize: "24px" }}
+                >
+                  {star <= rating ? <FaStar /> : <FaRegStar />}
+                </span>
+              ))}
+            </div>
 
-      {/* الأزرار */}
-      <div className="flex justify-end mt-6 space-x-4">
-        <button
-          onClick={closeModal}
-          className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={() => {
-            saveReview(); // حفظ المراجعة
-            toast.success("Review saved successfully!"); // عرض التنبيه
-            closeModal(); // إغلاق البوب-اب
-          }}
-          className="px-6 py-2 bg-[#A59D84] text-white rounded-lg hover:bg-[#A59D84] transition-all"
-        >
-          Save
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+            {/* تعليق المستخدم */}
+            <textarea
+              className="w-full p-2 border border-gray-300 rounded-lg mt-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#A59D84]"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Enter your comment..."
+              rows="4"
+            />
+
+            {/* الأزرار */}
+            <div className="flex justify-end mt-6 space-x-4">
+              <button
+                onClick={closeModal}
+                className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  saveReview(); // حفظ المراجعة
+                  toast.success("Review saved successfully!"); // عرض التنبيه
+                  closeModal(); // إغلاق البوب-اب
+                }}
+                className="px-6 py-2 bg-[#A59D84] text-white rounded-lg hover:bg-[#A59D84] transition-all"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
 
     </div>
