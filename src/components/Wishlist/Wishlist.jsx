@@ -133,7 +133,7 @@ const Wishlist = () => {
 
                         <div className="mt-0">
                           <p style={{ color: '#A59D84' }} className="text-xl font-semibold">
-                            ${product.price.toLocaleString()}
+                            JD{product.price.toLocaleString()}
                           </p>
                         </div>
 

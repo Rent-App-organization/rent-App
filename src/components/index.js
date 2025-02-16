@@ -14,3 +14,4 @@ export { default as About } from "./about/About.jsx";
 export { default as Contact } from "./contact/Contact.jsx";
 export { default as PageNotFound } from "./pageNotFound/PageNotFound.jsx";
 export { default as BecomeOwnerProfile } from "./propertyDetails/BecomeOwner.jsx";
+export {default as SellerObjection} from './admin_dash/SellerObjection.jsx';

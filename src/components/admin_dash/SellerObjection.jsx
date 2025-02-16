@@ -7,7 +7,7 @@ import { Shield, CheckCircle, XCircle } from 'lucide-react'; // استيراد �
 export default function SellerObjection() {
     const [message, setMessage] = useState([]);
 
-    const firebaseUrl = "https://rental-website-bb300-default-rtdb.firebaseio.com/products.json";
+    const firebaseUrl = "https://testrent-b52c9-default-rtdb.firebaseio.com/products.json";
 
     useEffect(() => {
         const fetchData = async () => {
@@ -31,7 +31,7 @@ export default function SellerObjection() {
     const handleApprove = async (id) => {
         try {
             await axios.patch(
-                `https://rental-website-bb300-default-rtdb.firebaseio.com/products/${id}.json`,
+                `https://testrent-b52c9-default-rtdb.firebaseio.com/products/${id}.json`,
                 {
                     status: "approved",
                     depositResponse: "Your deposit request has been approved!"
@@ -52,7 +52,7 @@ export default function SellerObjection() {
     const handleFinalReject = async (id) => {
         try {
             await axios.patch(
-                `https://rental-website-bb300-default-rtdb.firebaseio.com/products/${id}.json`,
+                `https://testrent-b52c9-default-rtdb.firebaseio.com/products/${id}.json`,
                 {
                     status: "rejected",
                     depositResponse: "Your deposit request has been permanently rejected."

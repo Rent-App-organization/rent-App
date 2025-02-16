@@ -14,7 +14,7 @@ import {
   Contact,
   PageNotFound,
   BecomeOwnerProfile,
-
+  SellerObjection,
 } from "./components";
 function App() {
 
@@ -72,12 +72,16 @@ function App() {
       path: '/BecomeOwnerProfile',
       element: <BecomeOwnerProfile />,
     },
+    {
+      path: '/sellerObjection',
+      element: <SellerObjection />,
+    }
   ])
 
   return (
     <>
       <RouterProvider router={router} />
-      
+
     </>
   )
 }
