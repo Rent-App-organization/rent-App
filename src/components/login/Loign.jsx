@@ -477,31 +477,14 @@ const Auth = () => {
               <p className="text-gray-600">
                 {isRegister
                   ? "Fill in your details to get started"
-                  : "Enter your credentials to continue"}
+                  : "Enter your credentials"}
               </p>
             </div>
 
             {/* Google Sign In Button */}
-            <button
-              onClick={handleGoogleSignIn}
-              className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-300"
-            >
-              <img
-                src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
-                alt="Google"
-                className="w-6 h-6"
-              />
-              {loading ? "Loading..." : "Continue with Google"}
-            </button>
 
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or continue with</span>
-              </div>
-            </div>
+
+
 
             <form onSubmit={isRegister ? handleRegister : handleLogin} className="space-y-6">
               {/* Profile Image Upload */}
@@ -626,6 +609,27 @@ const Auth = () => {
                 {loading ? "Loading..." : (isRegister ? "Create Account" : "Sign In")}
               </button>
             </form>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              </div>
+            </div>
+
+            <button
+              onClick={handleGoogleSignIn}
+              className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors duration-300"
+            >
+              <img
+                src="https://www.google.com/images/branding/googleg/1x/googleg_standard_color_128dp.png"
+                alt="Google"
+                className="w-6 h-6"
+              />
+              {loading ? "Loading..." : "Google"}
+            </button>
 
             {/* Toggle Link */}
             <p className="text-center text-gray-600">
