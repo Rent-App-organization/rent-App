@@ -18,7 +18,7 @@ const fetchProductName = async (productId) => {
     const snapshot = await get(productRef);
 
     if (snapshot.exists()) {
-      return snapshot.val().title; // Assuming each product has a "name" field
+      return snapshot.val().title;
     } else {
       return "Unknown Product";
     }
@@ -28,7 +28,6 @@ const fetchProductName = async (productId) => {
   }
 };
 
-// Fetch user data and notifications
 export const fetchUserData = () => async (dispatch) => {
   dispatch(setLoading(true));
   try {
